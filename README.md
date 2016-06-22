@@ -2,11 +2,10 @@
 
 ### Save and execute your favorite terminal scripts easily
 
-Do you find yourself from time to time searching the web again and again for the command format of one of the dozens 
-CLI tools out there? _then Search no more!_  
-**Scrippets** is a simple CLI tool itself, which allows you to store your frequently used commands, assign a friendly
-alias and execute it whenever needed. Those scrippets are stored locally on your file system, but can be easily shared
-between your other workstations by changing the scrippet default directory to Dropbox, Google drive etc.
+Do you find yourself searching the web again and again for the command format of one of the dozens 
+CLI tools out there? _then search no more!_  
+**Scrippets** is a simple CLI tool itself, which allows you to store your frequently used commands
+locally on your file system, assign a friendly alias and execute whenever needed.
 
 ### Installation:
 `npm install -g scrippets`
@@ -28,4 +27,5 @@ between your other workstations by changing the scrippet default directory to Dr
 ### Tips
 * Call any of the commands with `-h` parameter to see its help
 * Assign a shorter alias to scrippet command (e.g. `alias sc=scrippets`)
-* Change scrippets directory to Dropbox to have your scrippets on all of your workstations
+* Change scrippets directory to Dropbox, Google Drive or other online storage service, to have your scrippets on all 
+of your workstations

@@ -27,7 +27,8 @@ var actions = {
     // print scrippets:
     scrippets.forEach(function(key, value) {
       // display command if not filter specified or filter matches command id:
-      if (!strFilter || key.indexOf(strFilter) !== -1) {
+      if (!strFilter || key.indexOf(strFilter) !== -1 ||
+        (value.description && value.description.indexOf(strFilter) !== -1)) {
         intCounter++;
         // show scrippet id & command:
         console.log('*', key.bold.magenta, value.description || '');
