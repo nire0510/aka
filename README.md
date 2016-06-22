@@ -28,6 +28,14 @@ locally on your file system, assign a friendly alias and execute whenever needed
 * `<...>` - mandatory value
 * `[...]` - optional value
 
+### Examples
+* `scrippets upsert "source ~/.bashrc" -n compile-bash -d "update changes on bashrc immediately"` - adds a new scrippet
+with predefined name **compile-bash** and description
+* `scrippets ls bash` - searches for all scrippets which contains bash in their name or description
+* `scrippets ex compile-bash` - execute a scrippet with name **compile-bash**
+* `scrippets rm -rf` - removes all scrippets
+* `scrippets --chdir /Users/nir/Dropbox/scrippets` - changes scrippets directory to `/Users/nir/Dropbox/scrippets`
+
 ### Tips
 * If you get **EACCES: permission denied** error on first run, either change your global `node_modules` directory
 to a path you have **write** access to, or run `sudo scrippets` (you need to do it only once)

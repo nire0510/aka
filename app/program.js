@@ -17,11 +17,11 @@ commander.run = function (args) {
     .on('chdir', actions.chdir);
 
   commander
-    .command('upsert "<command...>"')
+    .command('upsert <command...>')
     .alias('set')
     .description(dict.program.commands.upsert.description)
     .option('-n, --name <name>', dict.program.commands.upsert.options.name)
-    .option('-d, --description "<description>"', dict.program.commands.upsert.options.description)
+    .option('-d, --description <description>', dict.program.commands.upsert.options.description)
     .action(actions.upsert);
 
   commander
