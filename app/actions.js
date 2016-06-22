@@ -48,7 +48,7 @@ var actions = {
     if (aux.moveDirectoryContent(settings.getItemSync(app.scrippetsDirectoryPathKeyName),
         strTargetPath)) {
       settings.setItemSync(app.scrippetsDirectoryPathKeyName, strTargetPath);
-      console.log(dict.program.commands.chdir.messages.changed.green, intCounter);
+      console.log(dict.program.commands.chdir.messages.changed.green, strTargetPath);
     }
   },
 
