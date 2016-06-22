@@ -20,6 +20,10 @@
     "bash"
   ],
   "author": "Nir Elbaz <nire0510@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nire0510/scrippets"
+  },
   "license": "ISC",
   "dependencies": {
     "colors": "^1.1.2",

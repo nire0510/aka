@@ -24,6 +24,10 @@ locally on your file system, assign a friendly alias and execute whenever needed
 `-V, --version`       output the version number  
 `-C, --chdir <path>`  change the working directory  
 
+### Cues
+* `<...>` - mandatory value
+* `[...]` - optional value
+
 ### Tips
 * Call any of the commands with `-h` parameter to see its help
 * Assign a shorter alias to scrippet command (e.g. `alias sc=scrippets`)
