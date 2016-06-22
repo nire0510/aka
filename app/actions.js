@@ -37,7 +37,7 @@ var actions = {
 
     // print total:
     console.log();
-    console.log(dict.program.commands.list.messages.total, intCounter);
+    console.log(dict.program.commands.list.messages.total, intCounter.bold);
   },
 
   /**
@@ -48,30 +48,63 @@ var actions = {
     if (aux.moveDirectoryContent(settings.getItemSync(app.scrippetsDirectoryPathKeyName),
         strTargetPath)) {
       settings.setItemSync(app.scrippetsDirectoryPathKeyName, strTargetPath);
-      console.log(dict.program.commands.chdir.messages.changed.green, strTargetPath);
+      console.log(dict.program.commands.chdir.messages.changed.green, strTargetPath.bold.white);
     }
+  },
+
+  /**
+   * Rename scrippet and optionally update its description
+   * @param {string} strScrippetName Current scrippet name
+   * @param {string} strScrippetNewName New scrippet name
+   * @param {object} objOptions Command options
+   */
+  move(strScrippetName, strScrippetNewName, objOptions) {
+    let objScrippet = actions.getScrippet(strScrippetName, true);
+
+    // scrippet not found:
+    if (!objScrippet) {
+      return;
+    }
+
+    // remove old command:
+    actions.remove([strScrippetName], {}, true);
+
+    // add new command:
+    actions.upsert(objScrippet.command.split(' '), {
+      name: strScrippetNewName,
+      description: objOptions.description && typeof objOptions.description === 'string' ?
+        objOptions.description :
+        objScrippet.description
+    }, true);
+
+    // feedback:
+    console.log(dict.program.commands.move.messages.moved.green, strScrippetNewName.bold.white)
   },
 
   /**
    * Adds a new scrippet or updates an existing one
    * @param {string[]} arrCommand Command as an array of words
    * @param {object} objOptions Command options
+   * @param {boolean} blnMute Indicates whether not to show feedback
    */
-  upsert(arrCommand, objOptions) {
-    let strScrippetName = objOptions.name || aux.generateName(scrippets.keys()),
+  upsert(arrCommand, objOptions, blnMute) {
+    let strScrippetName = (objOptions.name && typeof objOptions.name === 'string') ?
+      objOptions.name : aux.generateName(scrippets.keys()),
       objScrippet = actions.getScrippet(strScrippetName),
       strCommand = typeof arrCommand === 'string' ? arrCommand : arrCommand.join(' '),
       objCommand = new Scrippet(strScrippetName,
         strCommand,
-        objOptions.description && objOptions.description|| null);
+        objOptions.description && typeof objOptions.description === 'string' ? objOptions.description : null);
 
     // upsert:
     scrippets.setItem(strScrippetName, objCommand.asJSON());
     // feedback:
-    console.log(!objScrippet ?
-        dict.program.commands.upsert.messages.added.green :
-        dict.program.commands.upsert.messages.updated.green,
-      objCommand.name.bold.white);
+    if (!blnMute) {
+      console.log(!objScrippet ?
+          dict.program.commands.upsert.messages.added.green :
+          dict.program.commands.upsert.messages.updated.green,
+        objCommand.name.bold.white);
+    }
   },
 
   /**
@@ -95,13 +128,15 @@ var actions = {
    * @param {string[]} arrScrippetNames Scrippet name(s)
    * @param {object} objOptions Command options
    */
-  remove (arrScrippetNames, objOptions) {
+  remove (arrScrippetNames, objOptions, blnMuted) {
     // remove all scrippets flag:
     if (objOptions.recursive) {
       // skip confirmation flag:
       if (objOptions.force) {
         scrippets.clearSync();
-        console.log(dict.program.commands.remove.messages.allremoved.green);
+        if (!blnMuted) {
+          console.log(dict.program.commands.remove.messages.allremoved.green);
+        }
       }
       else {
         inquirer.prompt([{
@@ -132,9 +167,11 @@ var actions = {
       });
 
       // feedback:
-      arrScrippetNames.length === 1 ?
-        console.error(dict.program.commands.remove.messages.removed.green, `${arrScrippetNames[0]}`.bold) :
-        console.error(dict.program.commands.remove.messages.someremoved.green);
+      if (!blnMuted) {
+        arrScrippetNames.length === 1 ?
+          console.log(dict.program.commands.remove.messages.removed.green, `${arrScrippetNames[0]}`.bold.white) :
+          console.log(dict.program.commands.remove.messages.someremoved.green);
+      }
     }
   },
 
@@ -166,7 +203,7 @@ var actions = {
 
       // similar scrippets not found:
       if (arrScrippets.length === 0) {
-        console.error(dict.program.commands.execute.messages.noscrippet.red, strScrippetName.bold);
+        console.error(dict.program.commands.execute.messages.noscrippet.red, strScrippetName.bold.red);
         return;
       }
       // similar scrippets found:

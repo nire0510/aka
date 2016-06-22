@@ -1,6 +1,6 @@
 {
   "name": "scrippets",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Save and execute your favorite terminal scripts easily",
   "main": "bin/index.js",
   "scripts": {

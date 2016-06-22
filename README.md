@@ -14,7 +14,8 @@ locally on your file system, assign a friendly alias and execute whenever needed
 `Usage: scrippets [options] [command]`
 
 ### Commands
-* `upsert|set [options]`         add a new scrippet or update existing one    
+* `upsert|set [options]`         add a new scrippet or update existing one  
+* `move|mv [options] <from> <to>`      rename a scrippet and optionally update its description
 * `remove|rm [options] [name...]`  remove a one or more scrippets  
 * `list|ls [options] [filter]`   show all scrippets with optional filter  
 * `execute|ex <name>`              execute a scrippet

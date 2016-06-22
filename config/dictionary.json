@@ -22,6 +22,15 @@
           "changed": "Scrippets directory changed to"
         }
       },
+      "move": {
+        "description": "rename a scrippet and optionally update its description",
+        "options": {
+          "description": "short description"
+        },
+        "messages": {
+          "moved": "Scrippet renamed successfully. Name: %s"
+        }
+      },
       "upsert": {
         "description": "add a new scrippet or update existing one",
         "options": {

@@ -25,6 +25,13 @@ commander.run = function (args) {
     .action(actions.upsert);
 
   commander
+    .command('move <from> <to>')
+    .alias('mv')
+    .description(dict.program.commands.move.description)
+    .option('-d, --description <description>', dict.program.commands.move.options.description)
+    .action(actions.move);
+
+  commander
     .command('list [filter]')
     .alias('ls')
     .description(dict.program.commands.list.description)
