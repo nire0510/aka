@@ -1,10 +1,10 @@
 'use strict';
 
-var pkg = require('../package.json');
-var dict = require('../config/dictionary.json');
+var actions = require('./actions');
 var colors = require('colors');
 var commander = require('commander');
-var actions = require('./actions.js');
+var dict = require('../config/dictionary.json');
+var pkg = require('../package.json');
 
 /**
  * Initializes program

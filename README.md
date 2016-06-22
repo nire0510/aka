@@ -1,13 +1,13 @@
 # Scrippets
 
-### Save and execute your favorite terminal scripts easily
+###### Save and execute your favorite terminal scripts easily
 
 Do you find yourself searching the web again and again for the command format of one of the dozens 
 CLI tools out there? _then search no more!_  
 **Scrippets** is a simple CLI tool itself, which allows you to store your frequently used commands
 locally on your file system, assign a friendly alias and execute whenever needed.
 
-### Installation:
+### Installation
 `npm install -g scrippets`
 
 ### Usage

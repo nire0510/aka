@@ -1,14 +1,11 @@
-/**
- * Created by nirelbaz on 22/06/2016.
- */
 'use strict';
 
 var app = require('../config/app.json');
 var aux = require('./aux');
 var dict = require('../config/dictionary.json');
 var inquirer = require('inquirer');
-var scrippets = require('./scrippets');
 var Scrippet = require('./scrippet');
+var scrippets = require('./scrippets');
 var settings = require('./settings');
 
 var actions = {

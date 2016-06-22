@@ -3,7 +3,7 @@
 var app = require('../config/app.json');
 var storage = require('node-persist');
 
-// init storage:
+// create & initialize storage:
 let settings = storage.create({
   dir: 'scrippets'
 });

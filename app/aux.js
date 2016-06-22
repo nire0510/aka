@@ -1,6 +1,3 @@
-/**
- * Created by nirelbaz on 21/06/2016.
- */
 'use strict';
 
 var fs = require('fs');
