@@ -15,8 +15,8 @@ locally on your file system, assign a friendly alias and execute whenever needed
 
 ### Commands
 * `upsert|set [options]`         add a new scrippet or update existing one    
-* `list|ls [options] [filter]`   show all scrippets with optional filter  
 * `remove|rm [options] [id...]`  remove a one or more scrippets  
+* `list|ls [options] [filter]`   show all scrippets with optional filter  
 * `execute|ex <id>`              execute a scrippet
 
 ### Options
@@ -29,6 +29,8 @@ locally on your file system, assign a friendly alias and execute whenever needed
 * `[...]` - optional value
 
 ### Tips
+* If you get **EACCES: permission denied** error on first run, either change your global `node_modules` directory
+to a path you have **write** access to, or run `sudo scrippets` (you need to do it only once)
 * Call any of the commands with `-h` parameter to see its help
 * Assign a shorter alias to scrippet command (e.g. `alias sc=scrippets`)
 * Change scrippets directory to Dropbox, Google Drive or other online storage service, to have your scrippets on all 
