@@ -23,11 +23,11 @@ var actions = {
 
     // print scrippets:
     scrippets.forEach(function(key, value) {
-      // display command if not filter specified or filter matches command id:
+      // display command if not filter specified or filter matches command name:
       if (!strFilter || key.indexOf(strFilter) !== -1 ||
         (value.description && value.description.indexOf(strFilter) !== -1)) {
         intCounter++;
-        // show scrippet id & command:
+        // show scrippet name & command:
         console.log('*', key.bold.magenta, value.description || '');
         if (!objOptions.command) {
           console.log(' ', value.command.gray);
@@ -58,33 +58,33 @@ var actions = {
    * @param {object} objOptions Command options
    */
   upsert(arrCommand, objOptions) {
-    let strScrippetId = objOptions.identity || aux.generateId(scrippets.keys()),
-      objScrippet = actions.getScrippet(strScrippetId),
+    let strScrippetName = objOptions.name || aux.generateName(scrippets.keys()),
+      objScrippet = actions.getScrippet(strScrippetName),
       strCommand = typeof arrCommand === 'string' ? arrCommand : arrCommand.join(' '),
-      objCommand = new Scrippet(strScrippetId,
+      objCommand = new Scrippet(strScrippetName,
         strCommand,
         objOptions.description && objOptions.description|| null);
 
     // upsert:
-    scrippets.setItem(strScrippetId, objCommand.asJSON());
+    scrippets.setItem(strScrippetName, objCommand.asJSON());
     // feedback:
     console.log(!objScrippet ?
         dict.program.commands.upsert.messages.added.green :
         dict.program.commands.upsert.messages.updated.green,
-      objCommand.id.bold.white);
+      objCommand.name.bold.white);
   },
 
   /**
-   * Returns a scrippet by its ID and optionally displays an error if it doesn't
-   * @param {string} strScrippetID Scrippet ID
+   * Returns a scrippet by its name and optionally displays an error if it doesn't
+   * @param {string} strScrippetName Scrippet name
    * @param {boolean} blnShowError Indicates whether to show and error if scrippet doesn't exist
    */
-  getScrippet(strScrippetID, blnShowError) {
-    let scrippet = scrippets.getItemSync(strScrippetID);
+  getScrippet(strScrippetName, blnShowError) {
+    let scrippet = scrippets.getItemSync(strScrippetName);
 
     // feedback:
     if (!scrippet && blnShowError) {
-      console.error('There is no action with id:'.red, strScrippetID.bold.red);
+      console.error('There is no action with name:'.red, strScrippetName.bold.red);
     }
 
     return scrippet;
@@ -92,10 +92,10 @@ var actions = {
 
   /**
    * Removes a scrippet
-   * @param {string[]} arrScrippetID Scrippet ID(s)
+   * @param {string[]} arrScrippetNames Scrippet name(s)
    * @param {object} objOptions Command options
    */
-  remove (arrScrippetID, objOptions) {
+  remove (arrScrippetNames, objOptions) {
     // remove all scrippets flag:
     if (objOptions.recursive) {
       // skip confirmation flag:
@@ -119,31 +119,31 @@ var actions = {
       }
     }
     else {
-      // id is required:
-      if (arrScrippetID.length === 0) {
-        console.error(dict.program.commands.remove.messages.idmissing.red);
+      // name is required:
+      if (arrScrippetNames.length === 0) {
+        console.error(dict.program.commands.remove.messages.namemissing.red);
         return;
       }
 
       // remove:
-      arrScrippetID.forEach((strScrippetID) => {
+      arrScrippetNames.forEach((strScrippetName) => {
         // remove scrippet:
-        scrippets.removeItemSync(strScrippetID);
+        scrippets.removeItemSync(strScrippetName);
       });
 
       // feedback:
-      arrScrippetID.length === 1 ?
-        console.error(dict.program.commands.remove.messages.removed.green, `${arrScrippetID[0]}`.bold) :
+      arrScrippetNames.length === 1 ?
+        console.error(dict.program.commands.remove.messages.removed.green, `${arrScrippetNames[0]}`.bold) :
         console.error(dict.program.commands.remove.messages.someremoved.green);
     }
   },
 
   /**
    * Executes a scrippet
-   * @param {string} strScrippetID Scrippet ID
+   * @param {string} strScrippetName Scrippet name
    */
-  execute(strScrippetID) {
-    let scrippet = actions.getScrippet(strScrippetID);
+  execute(strScrippetName) {
+    let scrippet = actions.getScrippet(strScrippetName);
 
     // scrippet found:
     if (scrippet) {
@@ -155,8 +155,8 @@ var actions = {
 
       // print similar scrippets:
       scrippets.forEach(function(key, value) {
-        // display command if not filter specified or filter matches command id:
-        if (key.indexOf(strScrippetID) !== -1) {
+        // display command if not filter specified or filter matches command name:
+        if (key.indexOf(strScrippetName) !== -1) {
           arrScrippets.push({
             name: key,
             value: value
@@ -166,7 +166,7 @@ var actions = {
 
       // similar scrippets not found:
       if (arrScrippets.length === 0) {
-        console.error(dict.program.commands.execute.messages.noscrippet.red, strScrippetID.bold);
+        console.error(dict.program.commands.execute.messages.noscrippet.red, strScrippetName.bold);
         return;
       }
       // similar scrippets found:

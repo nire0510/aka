@@ -20,7 +20,7 @@ commander.run = function (args) {
     .command('upsert "<command...>"')
     .alias('set')
     .description(dict.program.commands.upsert.description)
-    .option('-i, --identity <identity>', dict.program.commands.upsert.options.identity)
+    .option('-n, --name <name>', dict.program.commands.upsert.options.name)
     .option('-d, --description "<description>"', dict.program.commands.upsert.options.description)
     .action(actions.upsert);
 
@@ -32,7 +32,7 @@ commander.run = function (args) {
     .action(actions.list);
 
   commander
-    .command('remove [id...]')
+    .command('remove [name...]')
     .alias('rm')
     .option('-r, --recursive', dict.program.commands.remove.options.recursive)
     .option('-f, --force', dict.program.commands.remove.options.force)
@@ -40,7 +40,7 @@ commander.run = function (args) {
     .action(actions.remove);
 
   commander
-    .command('execute <id>')
+    .command('execute <name>')
     .alias('ex')
     .description(dict.program.commands.execute.description)
     .action(actions.execute);

@@ -15,9 +15,9 @@ locally on your file system, assign a friendly alias and execute whenever needed
 
 ### Commands
 * `upsert|set [options]`         add a new scrippet or update existing one    
-* `remove|rm [options] [id...]`  remove a one or more scrippets  
+* `remove|rm [options] [name...]`  remove a one or more scrippets  
 * `list|ls [options] [filter]`   show all scrippets with optional filter  
-* `execute|ex <id>`              execute a scrippet
+* `execute|ex <name>`              execute a scrippet
 
 ### Options
 `-h, --help`          output usage information  

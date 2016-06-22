@@ -3,7 +3,7 @@
     "commands": {
       "common": {
         "messages": {
-          "idnotfound": "Could not found scrippet. ID:"
+          "idnotfound": "Could not found scrippet. Name: %s"
         }
       },
       "list": {
@@ -25,12 +25,12 @@
       "upsert": {
         "description": "add a new scrippet or update existing one",
         "options": {
-          "identity": "scrippet id",
+          "name": "scrippet name",
           "description": "short description"
         },
         "messages": {
-          "added": "Scrippet added successfully. ID: %s",
-          "updated": "Scrippet updated successfully. ID: %s"
+          "added": "Scrippet added successfully. Name: %s",
+          "updated": "Scrippet updated successfully. Name: %s"
         }
       },
       "remove": {
@@ -42,15 +42,15 @@
         "messages": {
           "allremoved": "All scrippets removed successfully",
           "someremoved": "Scrippets removed successfully",
-          "removed": "Scrippet removed successfully. ID:",
-          "idmissing": "At least one scrippet ID is required",
+          "removed": "Scrippet removed successfully. Name:",
+          "namemissing": "At least one scrippet name is required",
           "removeconfirm": "Remove all scrippets?"
         }
       },
       "execute": {
         "description": "execute a scrippet",
         "messages": {
-          "noscrippet": "Scrippet not found. ID:",
+          "noscrippet": "Scrippet not found. Name:",
           "scrippetslike": "Scrippet not found. Did you mean one of these scrippets?"
         }
       }
