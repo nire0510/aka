@@ -1,0 +1,30 @@
+{
+  "name": "scrippets",
+  "version": "0.0.1",
+  "description": "Save and execute your favorite terminal scripts easily",
+  "main": "bin/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "preferGlobal": true,
+  "bin": {
+    "scrippets": "./bin/index.js"
+  },
+  "keywords": [
+    "shell",
+    "terminal",
+    "cmd",
+    "node",
+    "snippets",
+    "scripts",
+    "bash"
+  ],
+  "author": "Nir Elbaz <nire0510@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "commander": "^2.9.0",
+    "inquirer": "^1.0.3",
+    "node-persist": "0.0.11"
+  }
+}

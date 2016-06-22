@@ -1,0 +1,59 @@
+{
+  "program": {
+    "commands": {
+      "common": {
+        "messages": {
+          "idnotfound": "Could not found scrippet. ID:"
+        }
+      },
+      "list": {
+        "description": "show all scrippets with optional filter",
+        "options": {
+          "command": "show command"
+        },
+        "messages": {
+          "listempty": "Scrippets list is empty",
+          "total": "(%d scrippet(s) found)"
+        }
+      },
+      "chdir": {
+        "description": "change the working directory",
+        "messages": {
+          "changed": "Scrippets directory changed to"
+        }
+      },
+      "upsert": {
+        "description": "add a new scrippet or update existing one",
+        "options": {
+          "identity": "scrippet id",
+          "description": "short description"
+        },
+        "messages": {
+          "added": "Scrippet added successfully. ID: %s",
+          "updated": "Scrippet updated successfully. ID: %s"
+        }
+      },
+      "remove": {
+        "description": "remove a one or more scrippets",
+        "options": {
+          "recursive": "remove all scrippets",
+          "force": "remove all scrippets, never prompt"
+        },
+        "messages": {
+          "allremoved": "All scrippets removed successfully",
+          "someremoved": "Scrippets removed successfully",
+          "removed": "Scrippet removed successfully. ID:",
+          "idmissing": "At least one scrippet ID is required",
+          "removeconfirm": "Remove all scrippets?"
+        }
+      },
+      "execute": {
+        "description": "execute a scrippet",
+        "messages": {
+          "noscrippet": "Scrippet not found. ID:",
+          "scrippetslike": "Scrippet not found. Did you mean one of these scrippets?"
+        }
+      }
+    }
+  }
+}

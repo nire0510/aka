@@ -1,0 +1,4 @@
+https://nodejs.org/api
+https://www.npmjs.com/package/commander
+https://github.com/simonlast/node-persist
+https://github.com/sboudrias/Inquirer.js
