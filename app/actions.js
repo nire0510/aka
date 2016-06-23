@@ -7,6 +7,7 @@ var inquirer = require('inquirer');
 var Scrippet = require('./scrippet');
 var scrippets = require('./scrippets');
 var settings = require('./settings');
+var spawnargs = require('spawn-args');
 
 var actions = {
   /**
@@ -238,23 +239,38 @@ var actions = {
     }
 
     function _exec(objScrippet, objOptions) {
-      let exec = require('child_process').exec;
+      const spawn = require('child_process').spawn;
+      const strFullCommand = `${objScrippet.command}${objOptions.params ? ' ' + objOptions.params : ''}`;
 
-      console.log(objScrippet.command);
+      console.log(strFullCommand);
       console.log();
 
+      // do not execute function:
       if (objOptions.dry) {
         return;
       }
 
-      exec(objScrippet.command, function(error, stdout, stderr){
-        if (error) {
-          console.error(stderr);
-        }
-        else {
-          console.log(stdout);
-        }
+      const child = spawn(strFullCommand.indexOf(' ') > 0 ?
+          strFullCommand.substr(0, strFullCommand.indexOf(' ')) :
+          strFullCommand,
+        strFullCommand.trim().indexOf(' ') > 0 ?
+          spawnargs(strFullCommand.substr(strFullCommand.indexOf(' ') + 1)) :
+          [], {
+          detached: true,
+          shell: true
+        });
+
+      child.stdout.on('data', (data) => {
+        console.log(`${data}`);
       });
+
+      child.stderr.on('data', (data) => {
+        console.error(`${data}`);
+      });
+
+      // child.on('close', (code) => {
+      //   console.log(`child process exited with code ${code}`);
+      // });
     }
   }
 };

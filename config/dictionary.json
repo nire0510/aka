@@ -59,7 +59,8 @@
       "execute": {
         "description": "execute a scrippet or display scrippets which contain the input",
         "options": {
-          "dry": "do not execute the command"
+          "dry": "do not execute the command",
+          "params": "append parameters to the command"
         },
         "messages": {
           "noscrippet": "Scrippet not found. Name:",
