@@ -13,7 +13,7 @@
         },
         "messages": {
           "listempty": "Scrippets list is empty",
-          "total": "(%d scrippet(s) found)"
+          "total": "(%s scrippet(s) found)"
         }
       },
       "chdir": {
@@ -28,7 +28,7 @@
           "description": "short description"
         },
         "messages": {
-          "moved": "Scrippet renamed successfully. Name: %s"
+          "moved": "Scrippet updated successfully. Name: %s"
         }
       },
       "upsert": {
@@ -58,6 +58,9 @@
       },
       "execute": {
         "description": "execute a scrippet",
+        "options": {
+          "dry": "do not execute the command"
+        },
         "messages": {
           "noscrippet": "Scrippet not found. Name:",
           "scrippetslike": "Scrippet not found. Did you mean one of these scrippets?"

@@ -25,7 +25,7 @@ commander.run = function (args) {
     .action(actions.upsert);
 
   commander
-    .command('move <from> <to>')
+    .command('move <from> [to]')
     .alias('mv')
     .description(dict.program.commands.move.description)
     .option('-d, --description <description>', dict.program.commands.move.options.description)
@@ -48,7 +48,8 @@ commander.run = function (args) {
 
   commander
     .command('execute <name>')
-    .alias('ex')
+    .alias('x')
+    .option('-d, --dry', dict.program.commands.execute.options.dry)
     .description(dict.program.commands.execute.description)
     .action(actions.execute);
 

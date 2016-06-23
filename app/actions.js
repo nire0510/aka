@@ -37,7 +37,7 @@ var actions = {
 
     // print total:
     console.log();
-    console.log(dict.program.commands.list.messages.total, intCounter.bold);
+    console.log(dict.program.commands.list.messages.total, intCounter.toString().bold);
   },
 
   /**
@@ -67,18 +67,23 @@ var actions = {
     }
 
     // remove old command:
-    actions.remove([strScrippetName], {}, true);
+    if (strScrippetNewName) {
+      actions.remove([strScrippetName], {}, true);
+    }
 
     // add new command:
     actions.upsert(objScrippet.command.split(' '), {
-      name: strScrippetNewName,
+      name: strScrippetNewName ? strScrippetNewName : strScrippetName,
       description: objOptions.description && typeof objOptions.description === 'string' ?
         objOptions.description :
         objScrippet.description
     }, true);
 
     // feedback:
-    console.log(dict.program.commands.move.messages.moved.green, strScrippetNewName.bold.white)
+    console.log(dict.program.commands.move.messages.moved.green, strScrippetNewName ?
+      strScrippetNewName.bold.white :
+      strScrippetName.bold.white
+    );
   },
 
   /**
@@ -178,13 +183,14 @@ var actions = {
   /**
    * Executes a scrippet
    * @param {string} strScrippetName Scrippet name
+   * @param {object} objOptions Command options
    */
-  execute(strScrippetName) {
+  execute(strScrippetName, objOptions) {
     let scrippet = actions.getScrippet(strScrippetName);
 
     // scrippet found:
     if (scrippet) {
-      _exec(scrippet);
+      _exec(scrippet, objOptions);
     }
     // scrippet not found, display similar scrippets
     else {
@@ -217,14 +223,21 @@ var actions = {
           // confirmed:
           if (answers.scrippet) {
             // execute:
-            _exec(answers.scrippet);
+            _exec(answers.scrippet, objOptions);
           }
         });
       }
     }
 
-    function _exec(objScrippet) {
+    function _exec(objScrippet, objOptions) {
       let exec = require('child_process').exec;
+
+      console.log(objScrippet.command);
+      console.log();
+
+      if (objOptions.dry) {
+        return;
+      }
 
       exec(objScrippet.command, function(error, stdout, stderr){
         if (error) {
