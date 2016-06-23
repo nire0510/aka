@@ -42,5 +42,7 @@ with predefined name **compile-bash** and description
 to a path you have **write** access to, or run `sudo scrippets` (you need to do it only once)
 * Call any of the commands with `-h` parameter to see its help
 * Assign a shorter alias to scrippet command (e.g. `alias sc=scrippets`)
+* You do not have to remember the command exact name. If no scrippets with the exact name found, similar options
+will be displayed so you can choose
 * Change scrippets directory to Dropbox, Google Drive or other online storage service, to have your scrippets on all 
 of your workstations

@@ -57,13 +57,14 @@
         }
       },
       "execute": {
-        "description": "execute a scrippet",
+        "description": "execute a scrippet or display scrippets which contain the input",
         "options": {
           "dry": "do not execute the command"
         },
         "messages": {
           "noscrippet": "Scrippet not found. Name:",
-          "scrippetslike": "Scrippet not found. Did you mean one of these scrippets?"
+          "scrippetslike": "Scrippet not found. Did you mean one of these scrippets?",
+          "quit": "None of the above, quit"
         }
       }
     }

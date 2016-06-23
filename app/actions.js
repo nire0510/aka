@@ -199,13 +199,21 @@ var actions = {
       // print similar scrippets:
       scrippets.forEach(function(key, value) {
         // display command if not filter specified or filter matches command name:
-        if (key.indexOf(strScrippetName) !== -1) {
+        if (key.indexOf(strScrippetName) !== -1 ||
+          (value.description && value.description.indexOf(strScrippetName) !== -1)) {
           arrScrippets.push({
             name: key,
             value: value
           });
         }
       });
+      // add quit option:
+      if (arrScrippets.length > 0) {
+        arrScrippets.push({
+          name: dict.program.commands.execute.messages.quit,
+          value: 'quit'
+        });
+      }
 
       // similar scrippets not found:
       if (arrScrippets.length === 0) {
@@ -221,7 +229,7 @@ var actions = {
           message: dict.program.commands.execute.messages.scrippetslike
         }]).then(function (answers) {
           // confirmed:
-          if (answers.scrippet) {
+          if (answers.scrippet && answers.scrippet !== 'quit') {
             // execute:
             _exec(answers.scrippet, objOptions);
           }
