@@ -18,7 +18,7 @@ locally on your file system, assign a friendly alias and execute whenever needed
 * `move|mv [options] <from> <to>`      rename a scrippet and optionally update its description
 * `remove|rm [options] [name...]`  remove a one or more scrippets  
 * `list|ls [options] [filter]`   show all scrippets with optional filter  
-* `execute|ex <name>`              execute a scrippet
+* `execute|x <name>`              execute a scrippet
 
 ### Options
 `-h, --help`          output usage information  
@@ -30,10 +30,11 @@ locally on your file system, assign a friendly alias and execute whenever needed
 * `[...]` - optional value
 
 ### Examples
-* `scrippets upsert "source ~/.bashrc" -n compile-bash -d "update changes on bashrc immediately"` - adds a new scrippet
-with predefined name **compile-bash** and description
-* `scrippets ls bash` - searches for all scrippets which contains bash in their name or description
-* `scrippets ex compile-bash` - execute a scrippet with name **compile-bash**
+* `scrippets upsert "curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'" 
+  -n my-ip -d "get my public ip address"` - adds a new scrippet
+  with predefined name **my-ip** and description
+* `scrippets ls ip` - searches for all scrippets which contains bash in their name or description
+* `scrippets x my-ip` - execute a scrippet with name **compile-bash**
 * `scrippets rm -rf` - removes all scrippets
 * `scrippets --chdir /Users/nir/Dropbox/scrippets` - changes scrippets directory to `/Users/nir/Dropbox/scrippets`
 
