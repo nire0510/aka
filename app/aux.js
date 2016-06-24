@@ -31,11 +31,10 @@ class AUX {
    * @returns {boolean} True if path is directory, false otherwise
    */
   static isDirectory (strPathName) {
-    var strNormalizedPath = strPathName && this.expandTilde(strPathName),
-      objStats;
+    var objStats;
 
     try {
-      objStats = fs.statSync(strNormalizedPath);
+      objStats = fs.statSync(strPathName);
 
       return objStats.isDirectory();
     }
@@ -50,9 +49,7 @@ class AUX {
    * @returns {boolean} True on success, false otherwise
    */
   static createDirectory (strPathName) {
-    var strNormalizedPath = strPathName && this.expandTilde(strPathName);
-
-    fs.mkdirSync(strNormalizedPath);
+    fs.mkdirSync(strPathName);
 
     return true;
   }
@@ -63,10 +60,6 @@ class AUX {
    * @param strTargetPath
    */
   static moveDirectoryContent (strSourcePath, strTargetPath) {
-    // normalize paths:
-    strSourcePath = strSourcePath && this.expandTilde(strSourcePath);
-    strTargetPath = strTargetPath && this.expandTilde(strTargetPath);
-
     // create target directory if not exists:
     if (!this.isDirectory(strTargetPath)) {
       this.createDirectory(strTargetPath);

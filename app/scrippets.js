@@ -12,7 +12,7 @@ if (!aux.isDirectory(settings.getItemSync(app.scrippetsDirectoryPathKeyName))) {
 
 // create & initialize storage:
 let scrippets = storage.create({
-  dir: aux.expandTilde(settings.getItemSync(app.scrippetsDirectoryPathKeyName))
+  dir: settings.getItemSync(app.scrippetsDirectoryPathKeyName)
 });
 scrippets.initSync();
 

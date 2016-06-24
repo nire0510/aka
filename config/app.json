@@ -1,4 +1,3 @@
 {
-  "scrippetsDirectoryPathKeyName": "scrippets-directory",
-  "scrippetsDirectoryDefaultPath": "~/.scrippets"
+  "scrippetsDirectoryPathKeyName": "scrippets-directory"
 }

@@ -40,9 +40,10 @@ locally on your file system, assign a friendly alias and execute whenever needed
 
 ### Tips & Tricks
 * Call any of the commands with `-h` parameter to see its help
-* Assign a shorter alias to scrippet command (e.g. `alias sc=scrippets`)
-* You do not have to remember the command exact name. If no scrippets with the exact name found, similar options
-will be displayed so you can choose
+* Always use absolute paths  (avoid shortcuts symbols such as ~, .. etc)
+* Assign a shorter alias to `scrippets` command (e.g. `alias sc=scrippets`)
+* You do not have to remember the command's exact name. If no scrippets found with the exact name, similar options
+will be displayed
 * Change scrippets directory to Dropbox, Google Drive or other online storage service, to have your scrippets on all 
 of your workstations
 * If you get **EACCES: permission denied** error on first run, either run as sudo (only once),
