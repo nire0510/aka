@@ -23,7 +23,7 @@
         }
       },
       "move": {
-        "description": "rename a scrippet and optionally update its description",
+        "description": "rename a scrippet and/or update its description",
         "options": {
           "description": "short description"
         },
@@ -60,7 +60,7 @@
         "description": "execute a scrippet or display scrippets which contain the input",
         "options": {
           "dry": "do not execute the command",
-          "params": "append parameters to the command"
+          "params": "temporarily append parameters to the command"
         },
         "messages": {
           "noscrippet": "Scrippet not found. Name:",
