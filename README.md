@@ -39,13 +39,13 @@ locally on your file system, assign a friendly alias and execute whenever needed
 * `scrippets --chdir /Users/nir/Dropbox/scrippets` - changes scrippets directory to `/Users/nir/Dropbox/scrippets`
 
 ### Tips & Tricks
-* If you get **EACCES: permission denied** error on first run, either change your global `node_modules` directory
-to a path you have **write** access to, or run `sudo scrippets` (you need to do it only once)
 * Call any of the commands with `-h` parameter to see its help
 * Assign a shorter alias to scrippet command (e.g. `alias sc=scrippets`)
 * You do not have to remember the command exact name. If no scrippets with the exact name found, similar options
 will be displayed so you can choose
 * Change scrippets directory to Dropbox, Google Drive or other online storage service, to have your scrippets on all 
 of your workstations
+* If you get **EACCES: permission denied** error on first run, either run as sudo (only once),
+or change your global `node_modules` directory to a path you have **write** access to
 * If you get **Permission denied (publickey)** error while running ssh scrippet, make sure your public key path is
 absolute (i.e. do not start path with tilde ~)
