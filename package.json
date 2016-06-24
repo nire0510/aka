@@ -30,6 +30,6 @@
     "commander": "^2.9.0",
     "inquirer": "^1.0.3",
     "node-persist": "0.0.11",
-    "spawn-args": "^0.1.0"
+    "string-argv": "0.0.2"
   }
 }

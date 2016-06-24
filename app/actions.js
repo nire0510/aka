@@ -7,7 +7,7 @@ var inquirer = require('inquirer');
 var Scrippet = require('./scrippet');
 var scrippets = require('./scrippets');
 var settings = require('./settings');
-var spawnargs = require('spawn-args');
+var sargs = require('string-argv');
 
 var actions = {
   /**
@@ -250,7 +250,7 @@ var actions = {
         strFullCommand.substr(0, strFullCommand.indexOf(' ')) :
         strFullCommand;
       const arrOpts = strFullCommand.trim().indexOf(' ') > 0 ?
-        spawnargs(strFullCommand.substr(strFullCommand.indexOf(' ') + 1)) :
+        sargs(strFullCommand.substr(strFullCommand.indexOf(' ') + 1)) :
         [];
       var shell;
 
