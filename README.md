@@ -33,8 +33,8 @@ locally on your file system, assign a friendly alias and execute whenever needed
 * `scrippets upsert "curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'" 
   -n my-ip -d "get my public ip address"` - adds a new scrippet
   with predefined name **my-ip** and description
-* `scrippets ls ip` - searches for all scrippets which contains bash in their name or description
-* `scrippets x my-ip` - execute a scrippet with name **compile-bash**
+* `scrippets ls ip` - searches for all scrippets which contains **ip** in their name or description
+* `scrippets x my-ip` - execute a scrippet with name **my-ip**
 * `scrippets rm -rf` - removes all scrippets
 * `scrippets --chdir /Users/nir/Dropbox/scrippets` - changes scrippets directory to `/Users/nir/Dropbox/scrippets`
 
