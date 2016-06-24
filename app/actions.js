@@ -238,10 +238,23 @@ var actions = {
       }
     }
 
+    /**
+     * execute command
+     * @param {object} objScrippet Scrippet object
+     * @param {object} objOptions Command options
+     * @private
+     */
     function _exec(objScrippet, objOptions) {
-      const spawn = require('child_process').spawn;
       const strFullCommand = `${objScrippet.command}${objOptions.params ? ' ' + objOptions.params : ''}`;
+      const strCommand = strFullCommand.indexOf(' ') > 0 ?
+        strFullCommand.substr(0, strFullCommand.indexOf(' ')) :
+        strFullCommand;
+      const arrOpts = strFullCommand.trim().indexOf(' ') > 0 ?
+        spawnargs(strFullCommand.substr(strFullCommand.indexOf(' ') + 1)) :
+        [];
+      var shell;
 
+      // display command:
       console.log(strFullCommand);
       console.log();
 
@@ -250,27 +263,37 @@ var actions = {
         return;
       }
 
-      const child = spawn(strFullCommand.indexOf(' ') > 0 ?
-          strFullCommand.substr(0, strFullCommand.indexOf(' ')) :
-          strFullCommand,
-        strFullCommand.trim().indexOf(' ') > 0 ?
-          spawnargs(strFullCommand.substr(strFullCommand.indexOf(' ') + 1)) :
-          [], {
-          detached: true,
-          shell: true
-        });
+      // parse command:
+      _shell(strCommand, arrOpts, function () {
+        return process.exit();
+      });
+    }
 
-      child.stdout.on('data', (data) => {
-        console.log(`${data}`);
+    /**
+     * Creates a shell
+     * @param {string} strCommand Command
+     * @param {object[]} arrOpts Command pptions
+     * @param {function} fncCallback Callback function
+     * @returns {*}
+     * @private
+     */
+    function _shell(strCommand, arrOpts, fncCallback) {
+      const spawn = require('child_process').spawn;
+      var proc;
+
+      process.stdin.pause();
+      process.stdin.setRawMode(false);
+
+      proc = spawn(strCommand, arrOpts, {
+        stdio: [0, 1, 2]
       });
 
-      child.stderr.on('data', (data) => {
-        console.error(`${data}`);
-      });
+      return proc.on('exit', function() {
+        process.stdin.setRawMode(true);
+        process.stdin.resume();
 
-      // child.on('close', (code) => {
-      //   console.log(`child process exited with code ${code}`);
-      // });
+        return fncCallback();
+      });
     }
   }
 };
