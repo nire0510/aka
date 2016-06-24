@@ -252,7 +252,6 @@ var actions = {
       const arrOpts = strFullCommand.trim().indexOf(' ') > 0 ?
         sargs(strFullCommand.substr(strFullCommand.indexOf(' ') + 1)) :
         [];
-      var shell;
 
       // display command:
       console.log(strFullCommand);

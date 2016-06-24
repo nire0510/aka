@@ -30,8 +30,7 @@ locally on your file system, assign a friendly alias and execute whenever needed
 * `[...]` - optional value
 
 ### Examples
-* `scrippets upsert "curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'" 
-  -n my-ip -d "get my public ip address"` - adds a new scrippet
+* `scrippets upsert -n my-ip -d "get my public ip address" "curl http://ifconfig.me/ip"` - adds a new scrippet
   with predefined name **my-ip** and description
 * `scrippets ls ip` - searches for all scrippets which contains **ip** in their name or description
 * `scrippets x my-ip` - execute a scrippet with name **my-ip**
