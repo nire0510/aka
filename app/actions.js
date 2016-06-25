@@ -4,12 +4,30 @@ var app = require('../config/app.json');
 var aux = require('./aux');
 var dict = require('../config/dictionary.json');
 var inquirer = require('inquirer');
+var pkg = require('../package.json');
 var Scrippet = require('./scrippet');
 var scrippets = require('./scrippets');
 var settings = require('./settings');
 var sargs = require('string-argv');
 
 var actions = {
+  version() {
+    var execSync = require('child_process').execSync,
+      strLatestVersion;
+
+    process.stdout.write(dict.program.commands.version.messages.checking);
+    strLatestVersion = execSync('npm show scrippets version');
+    if (`${strLatestVersion}`.indexOf(pkg.version) !== 0) {
+      console.log(dict.program.commands.version.messages.newversion.green,
+        `${strLatestVersion}`.replace( /[^0-9\.]/ , '').bold.green);
+      console.log(dict.program.commands.version.messages.upgrade,
+        dict.program.commands.version.messages.command.bold);
+    }
+    else {
+      console.log(dict.program.commands.version.messages.uptodate.green);
+    }
+  },
+
   /**
    * Shows all scrippets with optional filter
    */
@@ -24,11 +42,11 @@ var actions = {
 
     // print scrippets:
     scrippets.forEach(function(key, value) {
-      // display command if not filter specified or filter matches command name:
+      // display command if not filter specified or filter matches command alias:
       if (!strFilter || key.indexOf(strFilter) !== -1 ||
         (value.description && value.description.indexOf(strFilter) !== -1)) {
         intCounter++;
-        // show scrippet name & command:
+        // show scrippet alias & command:
         console.log('*', key.bold.magenta, value.description || '');
         if (!objOptions.command) {
           console.log(' ', value.command.gray);
@@ -55,12 +73,12 @@ var actions = {
 
   /**
    * Rename scrippet and optionally update its description
-   * @param {string} strScrippetName Current scrippet name
-   * @param {string} strScrippetNewName New scrippet name
+   * @param {string} strScrippetAlias Current scrippet alias
+   * @param {string} strScrippetNewAlias New scrippet alias
    * @param {object} objOptions Command options
    */
-  move(strScrippetName, strScrippetNewName, objOptions) {
-    let objScrippet = actions.getScrippet(strScrippetName, true);
+  move(strScrippetAlias, strScrippetNewAlias, objOptions) {
+    let objScrippet = actions.getScrippet(strScrippetAlias, true);
 
     // scrippet not found:
     if (!objScrippet) {
@@ -68,22 +86,22 @@ var actions = {
     }
 
     // remove old command:
-    if (strScrippetNewName) {
-      actions.remove([strScrippetName], {}, true);
+    if (strScrippetNewAlias) {
+      actions.remove([strScrippetAlias], {}, true);
     }
 
     // add new command:
     actions.upsert(objScrippet.command.split(' '), {
-      name: strScrippetNewName ? strScrippetNewName : strScrippetName,
+      alias: strScrippetNewAlias ? strScrippetNewAlias : strScrippetAlias,
       description: objOptions.description && typeof objOptions.description === 'string' ?
         objOptions.description :
         objScrippet.description
     }, true);
 
     // feedback:
-    console.log(dict.program.commands.move.messages.moved.green, strScrippetNewName ?
-      strScrippetNewName.bold.white :
-      strScrippetName.bold.white
+    console.log(dict.program.commands.move.messages.moved.green, strScrippetNewAlias ?
+      strScrippetNewAlias.bold.white :
+      strScrippetAlias.bold.white
     );
   },
 
@@ -94,36 +112,36 @@ var actions = {
    * @param {boolean} blnMute Indicates whether not to show feedback
    */
   upsert(arrCommand, objOptions, blnMute) {
-    let strScrippetName = (objOptions.name && typeof objOptions.name === 'string') ?
-      objOptions.name : aux.generateName(scrippets.keys()),
-      objScrippet = actions.getScrippet(strScrippetName),
+    let strScrippetAlias = (objOptions.alias && typeof objOptions.alias === 'string') ?
+      objOptions.alias : aux.generateAlias(scrippets.keys()),
+      objScrippet = actions.getScrippet(strScrippetAlias),
       strCommand = typeof arrCommand === 'string' ? arrCommand : arrCommand.join(' '),
-      objCommand = new Scrippet(strScrippetName,
+      objCommand = new Scrippet(strScrippetAlias,
         strCommand,
         objOptions.description && typeof objOptions.description === 'string' ? objOptions.description : null);
 
     // upsert:
-    scrippets.setItem(strScrippetName, objCommand.asJSON());
+    scrippets.setItem(strScrippetAlias, objCommand.asJSON());
     // feedback:
     if (!blnMute) {
       console.log(!objScrippet ?
           dict.program.commands.upsert.messages.added.green :
           dict.program.commands.upsert.messages.updated.green,
-        objCommand.name.bold.white);
+        objCommand.alias.bold.white);
     }
   },
 
   /**
-   * Returns a scrippet by its name and optionally displays an error if it doesn't
-   * @param {string} strScrippetName Scrippet name
+   * Returns a scrippet by its alias and optionally displays an error if it doesn't
+   * @param {string} strScrippetAlias Scrippet alias
    * @param {boolean} blnShowError Indicates whether to show and error if scrippet doesn't exist
    */
-  getScrippet(strScrippetName, blnShowError) {
-    let scrippet = scrippets.getItemSync(strScrippetName);
+  getScrippet(strScrippetAlias, blnShowError) {
+    let scrippet = scrippets.getItemSync(strScrippetAlias);
 
     // feedback:
     if (!scrippet && blnShowError) {
-      console.error('There is no action with name:'.red, strScrippetName.bold.red);
+      console.error('There is no action with alias:'.red, strScrippetAlias.bold.red);
     }
 
     return scrippet;
@@ -131,10 +149,10 @@ var actions = {
 
   /**
    * Removes a scrippet
-   * @param {string[]} arrScrippetNames Scrippet name(s)
+   * @param {string[]} arrScrippetAliases Scrippet alias(es)
    * @param {object} objOptions Command options
    */
-  remove (arrScrippetNames, objOptions, blnMuted) {
+  remove (arrScrippetAliases, objOptions, blnMuted) {
     // remove all scrippets flag:
     if (objOptions.recursive) {
       // skip confirmation flag:
@@ -160,22 +178,22 @@ var actions = {
       }
     }
     else {
-      // name is required:
-      if (arrScrippetNames.length === 0) {
-        console.error(dict.program.commands.remove.messages.namemissing.red);
+      // alias is required:
+      if (arrScrippetAliases.length === 0) {
+        console.error(dict.program.commands.remove.messages.aliasmissing.red);
         return;
       }
 
       // remove:
-      arrScrippetNames.forEach((strScrippetName) => {
+      arrScrippetAliases.forEach((strScrippetAlias) => {
         // remove scrippet:
-        scrippets.removeItemSync(strScrippetName);
+        scrippets.removeItemSync(strScrippetAlias);
       });
 
       // feedback:
       if (!blnMuted) {
-        arrScrippetNames.length === 1 ?
-          console.log(dict.program.commands.remove.messages.removed.green, `${arrScrippetNames[0]}`.bold.white) :
+        arrScrippetAliases.length === 1 ?
+          console.log(dict.program.commands.remove.messages.removed.green, `${arrScrippetAliases[0]}`.bold.white) :
           console.log(dict.program.commands.remove.messages.someremoved.green);
       }
     }
@@ -183,11 +201,11 @@ var actions = {
 
   /**
    * Executes a scrippet
-   * @param {string} strScrippetName Scrippet name
+   * @param {string} strScrippetAlias Scrippet alias
    * @param {object} objOptions Command options
    */
-  execute(strScrippetName, objOptions) {
-    let scrippet = actions.getScrippet(strScrippetName);
+  execute(strScrippetAlias, objOptions) {
+    let scrippet = actions.getScrippet(strScrippetAlias);
 
     // scrippet found:
     if (scrippet) {
@@ -199,9 +217,9 @@ var actions = {
 
       // print similar scrippets:
       scrippets.forEach(function(key, value) {
-        // display command if not filter specified or filter matches command name:
-        if (key.indexOf(strScrippetName) !== -1 ||
-          (value.description && value.description.indexOf(strScrippetName) !== -1)) {
+        // display command if not filter specified or filter matches command alias:
+        if (key.indexOf(strScrippetAlias) !== -1 ||
+          (value.description && value.description.indexOf(strScrippetAlias) !== -1)) {
           arrScrippets.push({
             name: key,
             value: value
@@ -218,7 +236,7 @@ var actions = {
 
       // similar scrippets not found:
       if (arrScrippets.length === 0) {
-        console.error(dict.program.commands.execute.messages.noscrippet.red, strScrippetName.bold.red);
+        console.error(dict.program.commands.execute.messages.noscrippet.red, strScrippetAlias.bold.red);
         return;
       }
       // similar scrippets found:
@@ -263,37 +281,37 @@ var actions = {
       }
 
       // parse command:
-      _shell(strCommand, arrOpts, function () {
+      actions.shell(strCommand, arrOpts, function () {
         return process.exit();
       });
     }
+  },
 
-    /**
-     * Creates a shell
-     * @param {string} strCommand Command
-     * @param {object[]} arrOpts Command pptions
-     * @param {function} fncCallback Callback function
-     * @returns {*}
-     * @private
-     */
-    function _shell(strCommand, arrOpts, fncCallback) {
-      const spawn = require('child_process').spawn;
-      var proc;
+  /**
+   * Creates a shell
+   * @param {string} strCommand Command
+   * @param {object[]} arrOpts Command pptions
+   * @param {function} fncCallback Callback function
+   * @returns {*}
+   * @private
+   */
+  shell(strCommand, arrOpts, fncCallback) {
+    const spawn = require('child_process').spawn;
+    var proc;
 
-      process.stdin.pause();
-      process.stdin.setRawMode(false);
+    process.stdin.pause();
+    process.stdin.setRawMode(false);
 
-      proc = spawn(strCommand, arrOpts, {
-        stdio: [0, 1, 2]
-      });
+    proc = spawn(strCommand, arrOpts, {
+      stdio: [0, 1, 2]
+    });
 
-      return proc.on('exit', function() {
-        process.stdin.setRawMode(true);
-        process.stdin.resume();
+    return proc.on('exit', function() {
+      process.stdin.setRawMode(true);
+      process.stdin.resume();
 
-        return fncCallback();
-      });
-    }
+      return fncCallback();
+    });
   }
 };
 

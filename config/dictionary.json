@@ -3,7 +3,16 @@
     "commands": {
       "common": {
         "messages": {
-          "idnotfound": "Could not found scrippet. Name: %s"
+          "idnotfound": "Could not found scrippet. Alias: %s"
+        }
+      },
+      "version": {
+        "messages": {
+          "checking": "Checking for newer version... ",
+          "uptodate": "You have the latest version!",
+          "newversion": "A new version is available:",
+          "upgrade": "To upgrade to the latest version, run:",
+          "command": "npm install -g scrippets"
         }
       },
       "list": {
@@ -23,23 +32,23 @@
         }
       },
       "move": {
-        "description": "rename a scrippet and/or update its description",
+        "description": "rename a scrippet alias and/or update its description",
         "options": {
           "description": "short description"
         },
         "messages": {
-          "moved": "Scrippet updated successfully. Name: %s"
+          "moved": "Scrippet updated successfully. Alias: %s"
         }
       },
       "upsert": {
         "description": "add a new scrippet or update existing one",
         "options": {
-          "name": "scrippet name",
+          "alias": "scrippet alias",
           "description": "short description"
         },
         "messages": {
-          "added": "Scrippet added successfully. Name: %s",
-          "updated": "Scrippet updated successfully. Name: %s"
+          "added": "Scrippet added successfully. Alias: %s",
+          "updated": "Scrippet updated successfully. Alias: %s"
         }
       },
       "remove": {
@@ -51,8 +60,8 @@
         "messages": {
           "allremoved": "All scrippets removed successfully",
           "someremoved": "Scrippets removed successfully",
-          "removed": "Scrippet removed successfully. Name:",
-          "namemissing": "At least one scrippet name is required",
+          "removed": "Scrippet removed successfully. Alias:",
+          "aliasmissing": "At least one scrippet alias is required",
           "removeconfirm": "Remove all scrippets?"
         }
       },
@@ -63,7 +72,7 @@
           "params": "temporarily append parameters to the command"
         },
         "messages": {
-          "noscrippet": "Scrippet not found. Name:",
+          "noscrippet": "Scrippet not found. Alias:",
           "scrippetslike": "Scrippet not found. Did you mean one of these scrippets?",
           "quit": "None of the above, quit"
         }

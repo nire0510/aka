@@ -1,8 +1,8 @@
 'use strict';
 
 class Scrippet {
-  constructor (strName, strCommand, strDescription) {
-    this.name = strName;
+  constructor (strAlias, strCommand, strDescription) {
+    this.alias = strAlias;
     this.command = strCommand;
     this.description = strDescription;
     this.timestamp = new Date();
@@ -10,7 +10,7 @@ class Scrippet {
 
   asJSON() {
     return {
-      name: this.name,
+      alias: this.alias,
       command: this.command,
       description: this.description,
       timestamp: this.timestamp

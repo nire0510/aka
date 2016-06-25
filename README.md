@@ -14,11 +14,11 @@ locally on your file system, assign a friendly alias and execute whenever needed
 `Usage: scrippets [options] [command]`
 
 ### Commands
-* `upsert|set [options]`         add a new scrippet or update existing one  
+* `upsert|set [options] <command>`         add a new scrippet or update existing one  
 * `move|mv [options] <from> <to>`      rename a scrippet and optionally update its description
-* `remove|rm [options] [name...]`  remove a one or more scrippets  
+* `remove|rm [options] [alias...]`  remove a one or more scrippets  
 * `list|ls [options] [filter]`   show all scrippets with optional filter  
-* `execute|x <name>`              execute a scrippet
+* `execute|x <alias>`              execute a scrippet
 
 ### Options
 `-h, --help`          output usage information  
@@ -31,9 +31,9 @@ locally on your file system, assign a friendly alias and execute whenever needed
 
 ### Examples
 * `scrippets upsert -n my-ip -d "get my public ip address" "curl http://ifconfig.me/ip"` - adds a new scrippet
-  with predefined name **my-ip** and description
-* `scrippets ls ip` - searches for all scrippets which contains **ip** in their name or description
-* `scrippets x my-ip` - execute a scrippet with name **my-ip**
+  with predefined alias **my-ip** and description
+* `scrippets ls ip` - searches for all scrippets which contains **ip** in their alias or description
+* `scrippets x my-ip` - execute a scrippet with alias **my-ip**
 * `scrippets rm -rf` - removes all scrippets
 * `scrippets --chdir /Users/nir/Dropbox/scrippets` - changes scrippets directory to `/Users/nir/Dropbox/scrippets`
 
@@ -41,7 +41,7 @@ locally on your file system, assign a friendly alias and execute whenever needed
 * Call any of the commands with `-h` parameter to see its help
 * Always use absolute paths  (avoid shortcuts symbols such as ~, .. etc)
 * Assign a shorter alias to `scrippets` command (e.g. `alias sc=scrippets`)
-* You do not have to remember the command's exact name. If no scrippets found with the exact name, similar options
+* You do not have to remember the command's exact alias. If no scrippets found with the exact alias, similar options
 will be displayed
 * Change scrippets directory to Dropbox, Google Drive or other online storage service, to have your scrippets on all 
 of your workstations

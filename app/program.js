@@ -14,13 +14,14 @@ commander.run = function (args) {
     .version(pkg.version)
     .description(pkg.description)
     .option('-C, --chdir <path>', dict.program.commands.chdir.description)
-    .on('chdir', actions.chdir);
+    .on('chdir', actions.chdir)
+    .on('--help', actions.version);
 
   commander
     .command('upsert <command...>')
     .alias('set')
     .description(dict.program.commands.upsert.description)
-    .option('-n, --name <name>', dict.program.commands.upsert.options.name)
+    .option('-a, --alias <alias>', dict.program.commands.upsert.options.alias)
     .option('-d, --description <description>', dict.program.commands.upsert.options.description)
     .action(actions.upsert);
 
@@ -39,7 +40,7 @@ commander.run = function (args) {
     .action(actions.list);
 
   commander
-    .command('remove [name...]')
+    .command('remove [alias...]')
     .alias('rm')
     .option('-r, --recursive', dict.program.commands.remove.options.recursive)
     .option('-f, --force', dict.program.commands.remove.options.force)
@@ -47,7 +48,7 @@ commander.run = function (args) {
     .action(actions.remove);
 
   commander
-    .command('execute <name>')
+    .command('execute <alias>')
     .alias('x')
     .option('-d, --dry', dict.program.commands.execute.options.dry)
     .option('-p, --params <params...>', dict.program.commands.execute.options.params)
@@ -57,7 +58,9 @@ commander.run = function (args) {
   // parse args:
   commander.parse(args);
   // display help if no args passed:
-  if (!commander.args.length && !commander.chdir) commander.help();
+  if (!commander.args.length && !commander.chdir) {
+    commander.help();
+  }
 };
 
 module.exports = commander;

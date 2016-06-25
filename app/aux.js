@@ -5,11 +5,11 @@ var path = require('path');
 
 class AUX {
   /**
-   * Generates a new scrippet name (max + 1)
-   * @param {string[]} arrKeys Array of existing scrippets names
+   * Generates a new scrippet alias (max + 1)
+   * @param {string[]} arrKeys Array of existing scrippets aliases
    * @returns {string} New scrippet ID
    */
-  static generateName (arrKeys) {
+  static generateAlias (arrKeys) {
     let intMaxId = Math.max.apply(null, arrKeys.filter((strKey) => /^\d+$/.test(strKey))
       .map((strNumber) => parseInt(strNumber)));
 
