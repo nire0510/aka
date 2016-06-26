@@ -30,12 +30,29 @@ locally on your file system, assign a friendly alias and execute whenever needed
 * `[...]` - optional value
 
 ### Examples
-* `scrippets upsert -n my-ip -d "get my public ip address" "curl http://ifconfig.me/ip"` - adds a new scrippet
-  with predefined alias **my-ip** and description
+* `scrippets upsert -a my-ip -d "get my public ip address" "curl http://ifconfig.me/ip"` - adds a new scrippet
+  with predefined alias **my-ip** and description. Description & command should be surrounded with quotes
 * `scrippets ls ip` - searches for all scrippets which contains **ip** in their alias or description
-* `scrippets x my-ip` - execute a scrippet with alias **my-ip**
+* `scrippets x my-ip` - execute a scrippet with alias **my-ip** (you can also omit the `x` if no options specified)
 * `scrippets rm -rf` - removes all scrippets
 * `scrippets --chdir /Users/nir/Dropbox/scrippets` - changes scrippets directory to `/Users/nir/Dropbox/scrippets`
+
+### Advanced Usage
+1. **Dynamic command parameters** - Use command option -p to leave out parameters which you want to add dynamically, for example:  
+`scrippets set -a ls -d "display folder content as a list" "ls -la"` and the usage is as follows:  
+`scrippets x ls -p "some-path"`
+2. **Dynamic command parameters binding** - Use command option -b to flag a command with bind-able parameters.  
+Parameters binding allow makes it even more easier to execute commands, by providing help and even set of valid options, for example:  
+`scrippets set -a scale-image -d "scale an image proportionally"
+    "convert {{Source image path?|input}} -resize {{Scale rate (in percents)?|input}} {{Scaled image path?|input}}""`
+     and the usage is as follows:  
+    `scrippets x scale-image -b`  
+
+  Dynamic command parameters binding format:
+    - `{{description|type[|options]}}`
+    - **description** - short parameter description to display to the user who runs this command
+    - **type** - can be either `input` for free text or `list` for predefined list of valid options
+    - **options** - semicolon separated list of strings, required only if type is `list`
 
 ### Tips & Tricks
 * Call any of the commands with `-h` parameter to see its help

@@ -69,12 +69,14 @@
         "description": "execute a scrippet or display scrippets which contain the input",
         "options": {
           "dry": "do not execute the command",
-          "params": "temporarily append parameters to the command"
+          "params": "temporarily append parameters to the command",
+          "binding": "command contains binding"
         },
         "messages": {
           "noscrippet": "Scrippet not found. Alias:",
           "scrippetslike": "Scrippet not found. Did you mean one of these scrippets?",
-          "quit": "None of the above, quit"
+          "quit": "None of the above, quit",
+          "bindingfailed": "Failed to parse command binding"
         }
       }
     }

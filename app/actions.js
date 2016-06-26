@@ -205,11 +205,23 @@ var actions = {
    * @param {object} objOptions Command options
    */
   execute(strScrippetAlias, objOptions) {
-    let scrippet = actions.getScrippet(strScrippetAlias);
+    let objScrippet = actions.getScrippet(strScrippetAlias);
 
     // scrippet found:
-    if (scrippet) {
-      _exec(scrippet, objOptions);
+    if (objScrippet) {
+      if (objOptions.binding) {
+        _parseBinding(objScrippet).then(
+          (objParsedScrippet) => {
+            _exec(objParsedScrippet, objOptions);
+          },
+          () => {
+            console.error(dict.program.commands.execute.messages.bindingfailed);
+          }
+        );
+      }
+      else {
+        _exec(objScrippet, objOptions);
+      }
     }
     // scrippet not found, display similar scrippets
     else {
@@ -221,7 +233,7 @@ var actions = {
         if (key.indexOf(strScrippetAlias) !== -1 ||
           (value.description && value.description.indexOf(strScrippetAlias) !== -1)) {
           arrScrippets.push({
-            name: key,
+            name: `${key.bold}${value.description ? ' ' + value.description.gray : ''}`,
             value: value
           });
         }
@@ -250,10 +262,71 @@ var actions = {
           // confirmed:
           if (answers.scrippet && answers.scrippet !== 'quit') {
             // execute:
-            _exec(answers.scrippet, objOptions);
+            if (objOptions.binding) {
+              _parseBinding(answers.scrippet).then(
+                (objParsedScrippet) => {
+                  _exec(objParsedScrippet, objOptions);
+                },
+                () => {
+                  console.error(dict.program.commands.execute.messages.bindingfailed);
+                }
+              );
+            }
+            else {
+              _exec(answers.scrippet, objOptions);
+            }
           }
         });
       }
+    }
+
+    /**
+     * Replaces binding with user input
+     * @param objScrippet Scrippet object
+     * @return {string} Scrippet after binding parsing
+     * @private
+     */
+    function _parseBinding (objScrippet) {
+      let arrQuestions = [],
+        regexp = /{{(.+?)}}/g,
+        arrBinding,
+        arrBindingParts,
+        intCounter = 0;
+
+      return new Promise((resolve, reject) => {
+        arrBinding = regexp.exec(objScrippet.command);
+        while (arrBinding != null) {
+          arrBindingParts = arrBinding[1].split('|');
+          arrQuestions.push(arrBindingParts[1] === 'input' ?
+            {
+              name: arrBinding[0],
+              message: arrBindingParts[0],
+              type: arrBindingParts[1]
+            } :
+            {
+              name: arrBinding[0],
+              message: arrBindingParts[0],
+              type: arrBindingParts[1],
+              choices: arrBindingParts[2].split(';')
+            }
+          );
+          intCounter++;
+          arrBinding = regexp.exec(objScrippet.command);
+        }
+
+        if (arrQuestions.length > 0) {
+          inquirer.prompt(arrQuestions).then(function (answers) {
+            for (let key in answers) {
+              objScrippet.command = objScrippet.command.replace(key, answers[key]);
+            }
+
+            resolve(objScrippet);
+          });
+        }
+        else {
+          reject();
+        }
+      });
     }
 
     /**

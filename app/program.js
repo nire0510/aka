@@ -50,9 +50,14 @@ commander.run = function (args) {
   commander
     .command('execute <alias>')
     .alias('x')
+    .option('-b, --binding', dict.program.commands.execute.options.binding)
     .option('-d, --dry', dict.program.commands.execute.options.dry)
     .option('-p, --params <params...>', dict.program.commands.execute.options.params)
     .description(dict.program.commands.execute.description)
+    .action(actions.execute);
+
+  commander
+    .command('*')
     .action(actions.execute);
 
   // parse args:
