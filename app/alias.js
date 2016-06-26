@@ -1,6 +1,6 @@
 'use strict';
 
-class Scrippet {
+class Alias {
   constructor (strAlias, strCommand, strDescription) {
     this.alias = strAlias;
     this.command = strCommand;
@@ -18,4 +18,4 @@ class Scrippet {
   }
 }
 
-module.exports = Scrippet;
+module.exports = Alias;

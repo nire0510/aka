@@ -5,8 +5,8 @@ var aux = require('./aux');
 var dict = require('../config/dictionary.json');
 var inquirer = require('inquirer');
 var pkg = require('../package.json');
-var Scrippet = require('./scrippet');
-var scrippets = require('./scrippets');
+var Alias = require('./alias');
+var aliases = require('./aliases');
 var settings = require('./settings');
 var sargs = require('string-argv');
 
@@ -16,7 +16,7 @@ var actions = {
       strLatestVersion;
 
     process.stdout.write(dict.program.commands.version.messages.checking);
-    strLatestVersion = execSync('npm show scrippets version');
+    strLatestVersion = execSync('npm show as-known-as version');
     if (`${strLatestVersion}`.indexOf(pkg.version) !== 0) {
       console.log(dict.program.commands.version.messages.newversion.green,
         `${strLatestVersion}`.replace( /[^0-9\.]/ , '').bold.green);
@@ -24,29 +24,29 @@ var actions = {
         dict.program.commands.version.messages.command.bold);
     }
     else {
-      console.log(dict.program.commands.version.messages.uptodate.green);
+      console.log(dict.program.commands.version.messages.uptodate.green, pkg.version.white.bold);
     }
   },
 
   /**
-   * Shows all scrippets with optional filter
+   * Shows all aliases with optional filter
    */
   list(strFilter, objOptions) {
     let intCounter = 0;
 
-    // no scrippets:
-    if (scrippets.length() === 0) {
+    // no aliases:
+    if (aliases.length() === 0) {
       console.warn(dict.program.commands.list.messages.listempty.green);
       return;
     }
 
-    // print scrippets:
-    scrippets.forEach(function(key, value) {
+    // print aliases:
+    aliases.forEach(function(key, value) {
       // display command if not filter specified or filter matches command alias:
       if (!strFilter || key.indexOf(strFilter) !== -1 ||
         (value.description && value.description.indexOf(strFilter) !== -1)) {
         intCounter++;
-        // show scrippet alias & command:
+        // show alias & command:
         console.log('*', key.bold.magenta, value.description || '');
         if (!objOptions.command) {
           console.log(' ', value.command.gray);
@@ -60,104 +60,101 @@ var actions = {
   },
 
   /**
-   * Changes scrippets directory
+   * Changes aliases directory
    * @param {string} strTargetPath Target path
    */
   chdir(strTargetPath) {
-    if (aux.moveDirectoryContent(settings.getItemSync(app.scrippetsDirectoryPathKeyName),
+    if (aux.moveDirectoryContent(settings.getItemSync(app.aliasesDirectoryPathKeyName),
         strTargetPath)) {
-      settings.setItemSync(app.scrippetsDirectoryPathKeyName, strTargetPath);
+      settings.setItemSync(app.aliasesDirectoryPathKeyName, strTargetPath);
       console.log(dict.program.commands.chdir.messages.changed.green, strTargetPath.bold.white);
     }
   },
 
   /**
-   * Rename scrippet and optionally update its description
-   * @param {string} strScrippetAlias Current scrippet alias
-   * @param {string} strScrippetNewAlias New scrippet alias
+   * Rename alias and optionally update its description
+   * @param {string} strAlias Current alias
+   * @param {string} strNewAlias New alias
    * @param {object} objOptions Command options
    */
-  move(strScrippetAlias, strScrippetNewAlias, objOptions) {
-    let objScrippet = actions.getScrippet(strScrippetAlias, true);
+  move(strAlias, strNewAlias, objOptions) {
+    let objAlias = actions.getAlias(strAlias, true);
 
-    // scrippet not found:
-    if (!objScrippet) {
+    // alias not found:
+    if (!objAlias) {
       return;
     }
 
     // remove old command:
-    if (strScrippetNewAlias) {
-      actions.remove([strScrippetAlias], {}, true);
+    if (strNewAlias) {
+      actions.remove([strAlias], {}, true);
     }
 
     // add new command:
-    actions.upsert(objScrippet.command.split(' '), {
-      alias: strScrippetNewAlias ? strScrippetNewAlias : strScrippetAlias,
-      description: objOptions.description && typeof objOptions.description === 'string' ?
-        objOptions.description :
-        objScrippet.description
-    }, true);
+    actions.upsert(strNewAlias ? strNewAlias : strAlias,
+      objAlias.command, {
+        description: objOptions.description && typeof objOptions.description === 'string' ?
+          objOptions.description :
+          objAlias.description
+      }, true);
 
     // feedback:
-    console.log(dict.program.commands.move.messages.moved.green, strScrippetNewAlias ?
-      strScrippetNewAlias.bold.white :
-      strScrippetAlias.bold.white
+    console.log(dict.program.commands.move.messages.moved.green, strNewAlias ?
+      strNewAlias.bold.white :
+      strAlias.bold.white
     );
   },
 
   /**
-   * Adds a new scrippet or updates an existing one
+   * Adds a new alias or updates an existing one
    * @param {string[]} arrCommand Command as an array of words
    * @param {object} objOptions Command options
    * @param {boolean} blnMute Indicates whether not to show feedback
    */
-  upsert(arrCommand, objOptions, blnMute) {
-    let strScrippetAlias = (objOptions.alias && typeof objOptions.alias === 'string') ?
-      objOptions.alias : aux.generateAlias(scrippets.keys()),
-      objScrippet = actions.getScrippet(strScrippetAlias),
-      strCommand = typeof arrCommand === 'string' ? arrCommand : arrCommand.join(' '),
-      objCommand = new Scrippet(strScrippetAlias,
+  upsert(strAlias, strCommand, objOptions, blnMute) {
+    let objAlias = actions.getAlias(strAlias),
+      objNewAlias = new Alias(strAlias,
         strCommand,
         objOptions.description && typeof objOptions.description === 'string' ? objOptions.description : null);
 
     // upsert:
-    scrippets.setItem(strScrippetAlias, objCommand.asJSON());
+    aliases.setItem(strAlias, objNewAlias.asJSON());
     // feedback:
     if (!blnMute) {
-      console.log(!objScrippet ?
+      console.log(!objAlias ?
           dict.program.commands.upsert.messages.added.green :
           dict.program.commands.upsert.messages.updated.green,
-        objCommand.alias.bold.white);
+        objNewAlias.alias.bold.white);
     }
   },
 
   /**
-   * Returns a scrippet by its alias and optionally displays an error if it doesn't
-   * @param {string} strScrippetAlias Scrippet alias
-   * @param {boolean} blnShowError Indicates whether to show and error if scrippet doesn't exist
+   * Returns an alias and optionally displays an error if it doesn't
+   * @param {string} strAlias Alias
+   * @param {boolean} blnShowError Indicates whether to show and error if alias doesn't exist
    */
-  getScrippet(strScrippetAlias, blnShowError) {
-    let scrippet = scrippets.getItemSync(strScrippetAlias);
+  getAlias(strAlias, blnShowError) {
+    let objAlias = aliases.getItemSync(strAlias);
 
     // feedback:
-    if (!scrippet && blnShowError) {
-      console.error('There is no action with alias:'.red, strScrippetAlias.bold.red);
+    if (!objAlias && blnShowError) {
+      console.error('There is no action with alias:'.red, strAlias.bold.red);
     }
 
-    return scrippet;
+    return objAlias;
   },
 
   /**
-   * Removes a scrippet
-   * @param {string[]} arrScrippetAliases Scrippet alias(es)
+   * Removes an alias
+   * @param {string[]} arrAliases Array of aliases
    * @param {object} objOptions Command options
    */
-  remove (arrScrippetAliases, objOptions, blnMuted) {
-    // remove all scrippets flag:
+  remove (arrAliases, objOptions, blnMuted) {
+    // remove all aliases flag:
     if (objOptions.recursive) {
       // skip confirmation flag:
       if (objOptions.force) {
-        scrippets.clearSync();
+        aliases.clearSync();
         if (!blnMuted) {
           console.log(dict.program.commands.remove.messages.allremoved.green);
         }
@@ -171,7 +168,7 @@ var actions = {
         }]).then(function (answers) {
           // confirmed:
           if (answers.remove) {
-            scrippets.clearSync();
+            aliases.clearSync();
             console.log(dict.program.commands.remove.messages.allremoved.green);
           }
         });
@@ -179,40 +176,40 @@ var actions = {
     }
     else {
       // alias is required:
-      if (arrScrippetAliases.length === 0) {
+      if (arrAliases.length === 0) {
         console.error(dict.program.commands.remove.messages.aliasmissing.red);
         return;
       }
 
       // remove:
-      arrScrippetAliases.forEach((strScrippetAlias) => {
-        // remove scrippet:
-        scrippets.removeItemSync(strScrippetAlias);
+      arrAliases.forEach((strAlias) => {
+        // remove alias:
+        aliases.removeItemSync(strAlias);
       });
 
       // feedback:
       if (!blnMuted) {
-        arrScrippetAliases.length === 1 ?
-          console.log(dict.program.commands.remove.messages.removed.green, `${arrScrippetAliases[0]}`.bold.white) :
+        arrAliases.length === 1 ?
+          console.log(dict.program.commands.remove.messages.removed.green, `${arrAliases[0]}`.bold.white) :
           console.log(dict.program.commands.remove.messages.someremoved.green);
       }
     }
   },
 
   /**
-   * Executes a scrippet
-   * @param {string} strScrippetAlias Scrippet alias
+   * Executes an alias
+   * @param {string} strAlias Alias
    * @param {object} objOptions Command options
    */
-  execute(strScrippetAlias, objOptions) {
-    let objScrippet = actions.getScrippet(strScrippetAlias);
+  execute(strAlias, objOptions) {
+    let objAlias = actions.getAlias(strAlias);
 
-    // scrippet found:
-    if (objScrippet) {
+    // alias found:
+    if (objAlias) {
       if (objOptions.binding) {
-        _parseBinding(objScrippet).then(
-          (objParsedScrippet) => {
-            _exec(objParsedScrippet, objOptions);
+        _parseBinding(objAlias).then(
+          (objParsedAlias) => {
+            _exec(objParsedAlias, objOptions);
           },
           () => {
             console.error(dict.program.commands.execute.messages.bindingfailed);
@@ -220,52 +217,52 @@ var actions = {
         );
       }
       else {
-        _exec(objScrippet, objOptions);
+        _exec(objAlias, objOptions);
       }
     }
-    // scrippet not found, display similar scrippets
+    // alias not found, display similar aliases
     else {
-      let arrScrippets = [];
+      let arrAliases = [];
 
-      // print similar scrippets:
-      scrippets.forEach(function(key, value) {
+      // print similar aliases:
+      aliases.forEach(function(key, value) {
         // display command if not filter specified or filter matches command alias:
-        if (key.indexOf(strScrippetAlias) !== -1 ||
-          (value.description && value.description.indexOf(strScrippetAlias) !== -1)) {
-          arrScrippets.push({
+        if (key.indexOf(strAlias) !== -1 ||
+          (value.description && value.description.indexOf(strAlias) !== -1)) {
+          arrAliases.push({
             name: `${key.bold}${value.description ? ' ' + value.description.gray : ''}`,
             value: value
           });
         }
       });
       // add quit option:
-      if (arrScrippets.length > 0) {
-        arrScrippets.push({
+      if (arrAliases.length > 0) {
+        arrAliases.push({
           name: dict.program.commands.execute.messages.quit,
           value: 'quit'
         });
       }
 
-      // similar scrippets not found:
-      if (arrScrippets.length === 0) {
-        console.error(dict.program.commands.execute.messages.noscrippet.red, strScrippetAlias.bold.red);
+      // similar aliases not found:
+      if (arrAliases.length === 0) {
+        console.error(dict.program.commands.execute.messages.noalias.red, strAlias.bold.red);
         return;
       }
-      // similar scrippets found:
+      // similar aliases found:
       else {
         inquirer.prompt([{
           type: 'list',
-          name: 'scrippet',
-          choices: arrScrippets,
-          message: dict.program.commands.execute.messages.scrippetslike
+          name: 'alias',
+          choices: arrAliases,
+          message: dict.program.commands.execute.messages.aliaseslike
         }]).then(function (answers) {
           // confirmed:
-          if (answers.scrippet && answers.scrippet !== 'quit') {
+          if (answers.alias && answers.alias !== 'quit') {
             // execute:
             if (objOptions.binding) {
-              _parseBinding(answers.scrippet).then(
-                (objParsedScrippet) => {
-                  _exec(objParsedScrippet, objOptions);
+              _parseBinding(answers.alias).then(
+                (objParsedAlias) => {
+                  _exec(objParsedAlias, objOptions);
                 },
                 () => {
                   console.error(dict.program.commands.execute.messages.bindingfailed);
@@ -273,7 +270,7 @@ var actions = {
               );
             }
             else {
-              _exec(answers.scrippet, objOptions);
+              _exec(answers.alias, objOptions);
             }
           }
         });
@@ -282,11 +279,11 @@ var actions = {
 
     /**
      * Replaces binding with user input
-     * @param objScrippet Scrippet object
-     * @return {string} Scrippet after binding parsing
+     * @param objAlias Alias object
+     * @return {string} Alias after binding parsing
      * @private
      */
-    function _parseBinding (objScrippet) {
+    function _parseBinding (objAlias) {
       let arrQuestions = [],
         regexp = /{{(.+?)}}/g,
         arrBinding,
@@ -294,7 +291,7 @@ var actions = {
         intCounter = 0;
 
       return new Promise((resolve, reject) => {
-        arrBinding = regexp.exec(objScrippet.command);
+        arrBinding = regexp.exec(objAlias.command);
         while (arrBinding != null) {
           arrBindingParts = arrBinding[1].split('|');
           arrQuestions.push(arrBindingParts[1] === 'input' ?
@@ -311,16 +308,16 @@ var actions = {
             }
           );
           intCounter++;
-          arrBinding = regexp.exec(objScrippet.command);
+          arrBinding = regexp.exec(objAlias.command);
         }
 
         if (arrQuestions.length > 0) {
           inquirer.prompt(arrQuestions).then(function (answers) {
             for (let key in answers) {
-              objScrippet.command = objScrippet.command.replace(key, answers[key]);
+              objAlias.command = objAlias.command.replace(key, answers[key]);
             }
 
-            resolve(objScrippet);
+            resolve(objAlias);
           });
         }
         else {
@@ -331,12 +328,12 @@ var actions = {
 
     /**
      * execute command
-     * @param {object} objScrippet Scrippet object
+     * @param {object} objAlias Alias object
      * @param {object} objOptions Command options
      * @private
      */
-    function _exec(objScrippet, objOptions) {
-      const strFullCommand = `${objScrippet.command}${objOptions.params ? ' ' + objOptions.params : ''}`;
+    function _exec(objAlias, objOptions) {
+      const strFullCommand = `${objAlias.command}${objOptions.params ? ' ' + objOptions.params : ''}`;
       const strCommand = strFullCommand.indexOf(' ') > 0 ?
         strFullCommand.substr(0, strFullCommand.indexOf(' ')) :
         strFullCommand;

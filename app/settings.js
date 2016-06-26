@@ -6,13 +6,13 @@ var storage = require('node-persist');
 
 // create & initialize storage:
 let settings = storage.create({
-  dir: 'scrippets'
+  dir: 'aliases'
 });
 settings.initSync();
 
 // If it's the first time the code runs, add the necessary keys:
-if (!settings.keys().some((strKey) => strKey === app.scrippetsDirectoryPathKeyName)) {
-  settings.setItemSync(app.scrippetsDirectoryPathKeyName, path.join(process.env.HOME, '.scrippets'));
+if (!settings.keys().some((strKey) => strKey === app.aliasesDirectoryPathKeyName)) {
+  settings.setItemSync(app.aliasesDirectoryPathKeyName, path.join(process.env.HOME, '.aliases'));
 }
 
 module.exports = settings;

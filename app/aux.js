@@ -5,9 +5,9 @@ var path = require('path');
 
 class AUX {
   /**
-   * Generates a new scrippet alias (max + 1)
-   * @param {string[]} arrKeys Array of existing scrippets aliases
-   * @returns {string} New scrippet ID
+   * Generates a new alias (max + 1)
+   * @param {string[]} arrKeys Array of existing aliases aliases
+   * @returns {string} New alias
    */
   static generateAlias (arrKeys) {
     let intMaxId = Math.max.apply(null, arrKeys.filter((strKey) => /^\d+$/.test(strKey))
@@ -55,7 +55,7 @@ class AUX {
   }
 
   /**
-   * Move all scrippets from one folder to another
+   * Move all aliases from one folder to another
    * @param strSourcePath
    * @param strTargetPath
    */

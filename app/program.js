@@ -18,10 +18,8 @@ commander.run = function (args) {
     .on('--help', actions.version);
 
   commander
-    .command('upsert <command...>')
-    .alias('set')
+    .command('<alias>=<command>')
     .description(dict.program.commands.upsert.description)
-    .option('-a, --alias <alias>', dict.program.commands.upsert.options.alias)
     .option('-d, --description <description>', dict.program.commands.upsert.options.description)
     .action(actions.upsert);
 
@@ -58,7 +56,24 @@ commander.run = function (args) {
 
   commander
     .command('*')
-    .action(actions.execute);
+    .action(function () {
+      let arrAlias, strAlias, strCommand,
+        objOptions = {};
+
+      for (let i = 2; i < commander.rawArgs.length; i++) {
+        if (commander.rawArgs[i].indexOf('=') !== -1) {
+          arrAlias = commander.rawArgs[i].split('=');
+          strAlias = arrAlias[0];
+          strCommand = arrAlias[1];
+        }
+        else if (commander.rawArgs[i] === '-d' || commander.rawArgs[i] === '--description' &&
+          i + 1 < commander.rawArgs.length) {
+          objOptions.description = commander.rawArgs[i + 1];
+        }
+      }
+
+      actions.upsert(strAlias, strCommand, objOptions);
+    });
 
   // parse args:
   commander.parse(args);

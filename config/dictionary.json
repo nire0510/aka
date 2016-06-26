@@ -3,79 +3,79 @@
     "commands": {
       "common": {
         "messages": {
-          "idnotfound": "Could not found scrippet. Alias: %s"
+          "idnotfound": "Could not found alias %s"
         }
       },
       "version": {
         "messages": {
           "checking": "Checking for newer version... ",
-          "uptodate": "You have the latest version!",
-          "newversion": "A new version is available:",
+          "uptodate": "You have the latest version:",
+          "newversion": "A newer version is available:",
           "upgrade": "To upgrade to the latest version, run:",
-          "command": "npm install -g scrippets"
+          "command": "npm install -g as-known-as"
         }
       },
       "list": {
-        "description": "show all scrippets with optional filter",
+        "description": "show all aliases with optional filter",
         "options": {
-          "command": "show command"
+          "command": "display commands as well"
         },
         "messages": {
-          "listempty": "Scrippets list is empty",
-          "total": "(%s scrippet(s) found)"
+          "listempty": "Aliases list is empty",
+          "total": "(%s alias(es) found)"
         }
       },
       "chdir": {
         "description": "change the working directory",
         "messages": {
-          "changed": "Scrippets directory changed to"
+          "changed": "Aliases directory changed to"
         }
       },
       "move": {
-        "description": "rename a scrippet alias and/or update its description",
+        "description": "rename an alias and/or update its description",
         "options": {
           "description": "short description"
         },
         "messages": {
-          "moved": "Scrippet updated successfully. Alias: %s"
+          "moved": "Alias updated successfully: %s"
         }
       },
       "upsert": {
-        "description": "add a new scrippet or update existing one",
+        "description": "add a new alias or update existing one",
         "options": {
-          "alias": "scrippet alias",
+          "alias": "command alias",
           "description": "short description"
         },
         "messages": {
-          "added": "Scrippet added successfully. Alias: %s",
-          "updated": "Scrippet updated successfully. Alias: %s"
+          "added": "Alias added successfully: %s",
+          "updated": "Alias updated successfully: %s"
         }
       },
       "remove": {
-        "description": "remove a one or more scrippets",
+        "description": "remove a one or more aliases",
         "options": {
-          "recursive": "remove all scrippets",
-          "force": "remove all scrippets, never prompt"
+          "recursive": "remove all aliases",
+          "force": "remove all aliases, never prompt"
         },
         "messages": {
-          "allremoved": "All scrippets removed successfully",
-          "someremoved": "Scrippets removed successfully",
-          "removed": "Scrippet removed successfully. Alias:",
-          "aliasmissing": "At least one scrippet alias is required",
-          "removeconfirm": "Remove all scrippets?"
+          "allremoved": "All aliases removed successfully",
+          "someremoved": "Aliases removed successfully",
+          "removed": "Alias removed successfully: ",
+          "aliasmissing": "At least one alias is required",
+          "removeconfirm": "Remove all aliases?"
         }
       },
       "execute": {
-        "description": "execute a scrippet or display scrippets which contain the input",
+        "description": "execute an alias or display aliases which contain the input",
         "options": {
           "dry": "do not execute the command",
           "params": "temporarily append parameters to the command",
           "binding": "command contains binding"
         },
         "messages": {
-          "noscrippet": "Scrippet not found. Alias:",
-          "scrippetslike": "Scrippet not found. Did you mean one of these scrippets?",
-          "quit": "None of the above, quit",
+          "noalias": "Alias not found:",
+          "aliaseslike": "Alias not found. Did you mean one of these?",
+          "quit": "None of the above, quit please",
           "bindingfailed": "Failed to parse command binding"
         }
       }

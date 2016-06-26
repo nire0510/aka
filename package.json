@@ -1,14 +1,14 @@
 {
-  "name": "scrippets",
+  "name": "as-known-as",
   "version": "0.1.0",
-  "description": "Save and execute your favorite terminal scripts easily",
+  "description": "Alias Bash Command on Steroids",
   "main": "bin/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "preferGlobal": true,
   "bin": {
-    "scrippets": "./bin/index.js"
+    "aka": "./bin/index.js"
   },
   "keywords": [
     "shell",
@@ -17,7 +17,10 @@
     "node",
     "snippets",
     "scripts",
-    "bash"
+    "bash",
+    "alias",
+    "abbreviation",
+    "productivity"
   ],
   "author": "Nir Elbaz <nire0510@gmail.com>",
   "repository": {
