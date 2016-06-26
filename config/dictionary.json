@@ -3,7 +3,8 @@
     "commands": {
       "common": {
         "messages": {
-          "idnotfound": "Could not found alias %s"
+          "idnotfound": "Could not found alias %s",
+          "commandnotfound": "No command matches your input"
         }
       },
       "version": {

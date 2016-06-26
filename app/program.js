@@ -57,22 +57,34 @@ commander.run = function (args) {
   commander
     .command('*')
     .action(function () {
-      let arrAlias, strAlias, strCommand,
-        objOptions = {};
+      // assume execute:
+      if (commander.rawArgs.length === 3 && commander.rawArgs[2].indexOf('=') === -1) {
+        actions.execute(commander.rawArgs[2], {});
+      }
+      // assume upsert:
+      else {
+        let arrAlias, strAlias, strCommand,
+          objOptions = {};
 
-      for (let i = 2; i < commander.rawArgs.length; i++) {
-        if (commander.rawArgs[i].indexOf('=') !== -1) {
-          arrAlias = commander.rawArgs[i].split('=');
-          strAlias = arrAlias[0];
-          strCommand = arrAlias[1];
+        for (let i = 2; i < commander.rawArgs.length; i++) {
+          if (commander.rawArgs[i].indexOf('=') !== -1) {
+            arrAlias = commander.rawArgs[i].split('=');
+            strAlias = arrAlias[0];
+            strCommand = arrAlias[1];
+          }
+          else if (commander.rawArgs[i] === '-d' || commander.rawArgs[i] === '--description' &&
+            i + 1 < commander.rawArgs.length) {
+            objOptions.description = commander.rawArgs[i + 1];
+          }
         }
-        else if (commander.rawArgs[i] === '-d' || commander.rawArgs[i] === '--description' &&
-          i + 1 < commander.rawArgs.length) {
-          objOptions.description = commander.rawArgs[i + 1];
+
+        if (strAlias && strCommand) {
+          actions.upsert(strAlias, strCommand, objOptions); 
+        }
+        else {
+          console.error(dict.program.commands.common.messages.commandnotfound.red);
         }
       }
-
-      actions.upsert(strAlias, strCommand, objOptions);
     });
 
   // parse args:

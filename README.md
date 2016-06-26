@@ -5,8 +5,8 @@
 A Bash `alias` is essentially nothing more than a keyboard shortcut, an abbreviation, 
 a means of avoiding typing a long command sequence.  
 It's because of these reasons that **AKA** provides a better alternative to the good ol' `alias` command:
-- It is stored as files on your file system and hence can be easily shared and synchronized between your computers
-- It is cross-platform, which means it can be be used on your Linux, MacOS or Windows based computed
+- Aliases are stored as files on your file system and hence can be easily shared and synchronized between your computers
+- AKA is cross-platform, which means it can be be used on your Linux, MacOS or Windows OS based machines
 - It comes with some advance & handy features, such as: search, dynamic parameters and more
 
 ### Installation
@@ -16,7 +16,7 @@ It's because of these reasons that **AKA** provides a better alternative to the 
 `Usage: aka [options] [command]`
 
 ### Commands
-* `[options] <alias>=<command>`         add a new alias or update existing one  
+* `<alias>=<command> [options]`         add a new alias or update existing one  
 * `move|mv [options] <from> <to>`      rename an existing alias and/or update its description
 * `remove|rm [options] [alias...]`  remove a one or more aliases  
 * `list|ls [options] [filter]`   show all aliases with optional filter  
