@@ -1,6 +1,7 @@
 'use strict';
 
 var app = require('../config/app.json');
+var dict = require('../config/dictionary.json');
 var aux = require('./aux');
 var settings = require('./settings');
 var storage = require('node-persist');
