@@ -35,6 +35,7 @@ commander.run = function (args) {
     .alias('ls')
     .description(dict.program.commands.list.description)
     .option('-c, --command', dict.program.commands.list.options.command)
+    .option('-g, --global', dict.program.commands.list.options.global)
     .action(actions.list);
 
   commander
@@ -48,8 +49,8 @@ commander.run = function (args) {
   commander
     .command('execute <alias>')
     .alias('x')
-    .option('-b, --binding', dict.program.commands.execute.options.binding)
     .option('-d, --dry', dict.program.commands.execute.options.dry)
+    .option('-g, --global', dict.program.commands.execute.options.global)
     .option('-p, --params <params...>', dict.program.commands.execute.options.params)
     .description(dict.program.commands.execute.description)
     .action(actions.execute);

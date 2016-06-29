@@ -1,0 +1,6 @@
+{
+  "alias":"view-zip",
+  "command":"unzip -l {{Zip file path?|input}}",
+  "description":"view zip file content",
+  "timestamp":"2016-06-28T08:49:10.306Z"
+}

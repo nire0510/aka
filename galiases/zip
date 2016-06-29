@@ -1,0 +1,6 @@
+{
+  "alias":"zip",
+  "command":"zip -r {{Name of zip file?|input}} {{Folder to compress?|input}}",
+  "description":"zip a folder",
+  "timestamp":"2016-06-28T08:49:10.306Z"
+}

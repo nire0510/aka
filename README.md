@@ -48,13 +48,34 @@ Parameters binding makes it even easier to execute aliases, by providing help an
 `aka scale-image="convert {{Source image path?|input}} -resize {{Scale rate (in percents)?|input}} {{Scaled image path?|input}}"
     -d "scale an image proportionally"`
      and then the use as follows:  
-    `aka x scale-image -b`  
+    `aka x scale-image`  
 
-  Dynamic command parameters binding format:
-    - `{{description|type[|options]}}`
-    - **description** - short parameter description
-    - **type** - can be either `input` for free text or `list` for predefined list of valid options
-    - **options** - semicolon separated list of strings, required only if type is `list`
+  Dynamic command parameters binding format:  
+    - `{{description|type[|options]}}`  
+    - **description** - short parameter description  
+    - **type** - can be either `input` for free text, `list` for predefined list of valid options or `confirm` for
+      specific value (see **options** for more info)  
+    - **options**  
+        - case `list` - semicolon separated list of strings, required only if type is `list`  
+        - case `confirm` - a value which will be appended to the command in case of confirmation  
+        
+### Global Aliases
+In addition to the aliases you yourself, there are global aliases which come built-in with this tool.  
+To see those aliases or to execute them, add `-g` to the `ls` or `x` command respectively, for example:  
+`aka ls -g` or `aka x zip`.
+
+#### Adding Global Aliases
+If you have an alias you find very useful, you can suggest adding it to the global aliases repository.  
+To do this, clone the project, then add your alias to the **galiases** directory according to the example below:
+```json
+{
+  "alias": "ll",
+  "command": "ls -la",
+  "description": "long listing",
+  "timestamp": "2016-06-28T08:49:10.306Z",
+  "credit": "you.email@domain.com"
+}
+```
 
 ### Tips & Tricks
 * Call any of the commands with `-h` parameter to see its help

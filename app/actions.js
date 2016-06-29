@@ -38,16 +38,17 @@ var actions = {
    * Shows all aliases with optional filter
    */
   list(strFilter, objOptions) {
-    let intCounter = 0;
+    let intCounter = 0,
+      repo = objOptions.global ? galiases : aliases;
 
     // no aliases:
-    if (aliases.length() === 0) {
+    if (repo.length() === 0) {
       console.warn(dict.program.commands.list.messages.listempty.green);
       return;
     }
 
     // print aliases:
-    aliases.forEach(function(key, value) {
+    repo.forEach(function(key, value) {
       // display command if not filter specified or filter matches command alias:
       if (!strFilter || key.indexOf(strFilter) !== -1 ||
         (value.description && value.description.indexOf(strFilter) !== -1)) {
@@ -86,7 +87,7 @@ var actions = {
    * @param {object} objOptions Command options
    */
   move(strAlias, strNewAlias, objOptions) {
-    let objAlias = actions.getAlias(strAlias, true);
+    let objAlias = actions.getAlias(strAlias, null, true);
 
     // alias not found:
     if (!objAlias) {
@@ -120,7 +121,7 @@ var actions = {
    * @param {boolean} blnMute Indicates whether not to show feedback
    */
   upsert(strAlias, strCommand, objOptions, blnMute) {
-    let objAlias = actions.getAlias(strAlias),
+    let objAlias = actions.getAlias(strAlias, null, false),
       objNewAlias = new Alias(strAlias,
         strCommand,
         objOptions.description && typeof objOptions.description === 'string' ? objOptions.description : null);
@@ -139,10 +140,11 @@ var actions = {
   /**
    * Returns an alias and optionally displays an error if it doesn't
    * @param {string} strAlias Alias
+   * @param {object} objOptions Command options
    * @param {boolean} blnShowError Indicates whether to show and error if alias doesn't exist
    */
-  getAlias(strAlias, blnShowError) {
-    let objAlias = aliases.getItemSync(strAlias);
+  getAlias(strAlias, objOptions, blnShowError) {
+    let objAlias = objOptions.global ? galiases.getItemSync(strAlias) : aliases.getItemSync(strAlias);
 
     // feedback:
     if (!objAlias && blnShowError) {
@@ -210,11 +212,11 @@ var actions = {
    * @param {object} objOptions Command options
    */
   execute(strAlias, objOptions) {
-    let objAlias = actions.getAlias(strAlias);
+    let objAlias = actions.getAlias(strAlias, objOptions, false);
 
     // alias found:
     if (objAlias) {
-      if (objOptions.binding) {
+      if (/[{]{2}.+[}]{2}/.test(objAlias.command)) {
         _parseBinding(objAlias).then(
           (objParsedAlias) => {
             _exec(objParsedAlias, objOptions);
@@ -267,7 +269,7 @@ var actions = {
           // confirmed:
           if (answers.alias && answers.alias !== 'quit') {
             // execute:
-            if (objOptions.binding) {
+            if (/[{]{2}.+[}]{2}/.test(answers.alias.command)) {
               _parseBinding(answers.alias).then(
                 (objParsedAlias) => {
                   _exec(objParsedAlias, objOptions);
@@ -319,6 +321,13 @@ var actions = {
                 choices: arrBindingParts[2].split(';')
               };
               break;
+            case 'confirm':
+              objQuestion = {
+                name: arrBinding[0],
+                message: arrBindingParts[0],
+                type: arrBindingParts[1]
+              };
+              break;
           }
           
           arrQuestions.push(objQuestion);
@@ -329,7 +338,13 @@ var actions = {
         if (arrQuestions.length > 0) {
           inquirer.prompt(arrQuestions).then(function (answers) {
             for (let key in answers) {
-              objAlias.command = objAlias.command.replace(key, answers[key]);
+              if (key.indexOf('|confirm|') !== -1) {
+                objAlias.command = objAlias.command.replace(key,
+                  answers[key] ? key.substring(key.lastIndexOf('|') + 1, key.lastIndexOf('}') - 1) : '');
+              }
+              else {
+                objAlias.command = objAlias.command.replace(key, answers[key]);
+              }
             }
 
             resolve(objAlias);

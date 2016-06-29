@@ -26,7 +26,8 @@
       "list": {
         "description": "show all aliases with optional filter",
         "options": {
-          "command": "display commands as well"
+          "command": "display commands as well",
+          "global": "search in the global aliases repository"
         },
         "messages": {
           "listempty": "Aliases list is empty",
@@ -79,7 +80,7 @@
         "options": {
           "dry": "do not execute the command",
           "params": "temporarily append parameters to the command",
-          "binding": "command contains binding"
+          "global": "command in global aliases repository"
         },
         "messages": {
           "noalias": "Alias not found:",
