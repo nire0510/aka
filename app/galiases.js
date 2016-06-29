@@ -11,10 +11,15 @@ if (!aux.isDirectory(settings.getItemSync(app.publicAliasesDirectoryPathKeyName)
   aux.createDirectory(settings.getItemSync(app.publicAliasesDirectoryPathKeyName));
 }
 
-// create & initialize storage:
-galiases = storage.create({
-  dir: settings.getItemSync(app.publicAliasesDirectoryPathKeyName)
-});
-galiases.initSync();
+try {
+  // create & initialize storage:
+  galiases = storage.create({
+    dir: settings.getItemSync(app.publicAliasesDirectoryPathKeyName)
+  });
+  galiases.initSync();
+} catch (e) {
+  console.log(dict.program.setup.messages.storagefailed.red);
+  process.exit(0);
+}
 
 module.exports = galiases;

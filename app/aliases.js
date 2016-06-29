@@ -12,10 +12,15 @@ if (!aux.isDirectory(settings.getItemSync(app.privateAliasesDirectoryPathKeyName
   aux.createDirectory(settings.getItemSync(app.privateAliasesDirectoryPathKeyName));
 }
 
-// create & initialize storage:
-aliases = storage.create({
-  dir: settings.getItemSync(app.privateAliasesDirectoryPathKeyName)
-});
-aliases.initSync();
+try {
+  // create & initialize storage:
+  aliases = storage.create({
+    dir: settings.getItemSync(app.privateAliasesDirectoryPathKeyName)
+  });
+  aliases.initSync();
+} catch (e) {
+  console.error('ALIASES:', dict.program.setup.messages.storagefailed.red);
+  process.exit(0);
+}
 
 module.exports = aliases;
