@@ -30,7 +30,7 @@
         "messages": {
           "listempty": "Aliases list is empty",
           "total": "(%s aliases found)",
-          "totalone": "(%s alias found)",
+          "totalone": "(%s alias found)"
         }
       },
       "chdir": {
