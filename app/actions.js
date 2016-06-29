@@ -7,14 +7,20 @@ var inquirer = require('inquirer');
 var pkg = require('../package.json');
 var Alias = require('./alias');
 var aliases = require('./aliases');
+var galiases = require('./galiases');
 var settings = require('./settings');
 var sargs = require('string-argv');
 
 var actions = {
-  version() {
+  help() {
     var execSync = require('child_process').execSync,
       strLatestVersion;
 
+
+    console.log(dict.program.setup.messages.storagepath,
+      settings.getItemSync(app.privateAliasesDirectoryPathKeyName).white.bold);
+
+    // check latest version
     process.stdout.write(dict.program.commands.version.messages.checking);
     strLatestVersion = execSync('npm show as-known-as version');
     if (`${strLatestVersion}`.indexOf(pkg.version) !== 0) {
@@ -56,7 +62,9 @@ var actions = {
 
     // print total:
     console.log();
-    console.log(dict.program.commands.list.messages.total, intCounter.toString().bold);
+    console.log(intCounter === 1 ?
+      dict.program.commands.list.messages.totalone :
+      dict.program.commands.list.messages.total, intCounter.toString().bold);
   },
 
   /**
@@ -64,9 +72,9 @@ var actions = {
    * @param {string} strTargetPath Target path
    */
   chdir(strTargetPath) {
-    if (aux.moveDirectoryContent(settings.getItemSync(app.aliasesDirectoryPathKeyName),
+    if (aux.moveDirectoryContent(settings.getItemSync(app.privateAliasesDirectoryPathKeyName),
         strTargetPath)) {
-      settings.setItemSync(app.aliasesDirectoryPathKeyName, strTargetPath);
+      settings.setItemSync(app.privateAliasesDirectoryPathKeyName, strTargetPath);
       console.log(dict.program.commands.chdir.messages.changed.green, strTargetPath.bold.white);
     }
   },
@@ -288,25 +296,32 @@ var actions = {
         regexp = /{{(.+?)}}/g,
         arrBinding,
         arrBindingParts,
-        intCounter = 0;
+        intCounter = 0,
+        objQuestion = {};
 
       return new Promise((resolve, reject) => {
         arrBinding = regexp.exec(objAlias.command);
         while (arrBinding != null) {
           arrBindingParts = arrBinding[1].split('|');
-          arrQuestions.push(arrBindingParts[1] === 'input' ?
-            {
-              name: arrBinding[0],
-              message: arrBindingParts[0],
-              type: arrBindingParts[1]
-            } :
-            {
-              name: arrBinding[0],
-              message: arrBindingParts[0],
-              type: arrBindingParts[1],
-              choices: arrBindingParts[2].split(';')
-            }
-          );
+          switch (arrBindingParts[1]) {
+            case 'input':
+              objQuestion = {
+                name: arrBinding[0],
+                message: arrBindingParts[0],
+                type: arrBindingParts[1]
+              };
+              break;
+            case 'list':
+              objQuestion = {
+                name: arrBinding[0],
+                message: arrBindingParts[0],
+                type: arrBindingParts[1],
+                choices: arrBindingParts[2].split(';')
+              };
+              break;
+          }
+          
+          arrQuestions.push(objQuestion);
           intCounter++;
           arrBinding = regexp.exec(objAlias.command);
         }

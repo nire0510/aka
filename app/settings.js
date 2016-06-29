@@ -1,18 +1,33 @@
 'use strict';
 
 var app = require('../config/app.json');
+var colors = require('colors');
+var dict = require('../config/dictionary.json');
 var path = require('path');
 var storage = require('node-persist');
+var settings;
 
 // create & initialize storage:
-let settings = storage.create({
-  dir: 'aliases'
-});
-settings.initSync();
+try {
+  settings = storage.create({
+    dir: app.settingsDirectoryName
+  });
+  settings.initSync();
 
-// If it's the first time the code runs, add the necessary keys:
-if (!settings.keys().some((strKey) => strKey === app.aliasesDirectoryPathKeyName)) {
-  settings.setItemSync(app.aliasesDirectoryPathKeyName, path.join(process.env.HOME, '.aliases'));
+  // Migrate
+
+  // Add setting key for private aliases if it doesn't exist:
+  if (!settings.keys().some((strKey) => strKey === app.privateAliasesDirectoryPathKeyName)) {
+    settings.setItemSync(app.privateAliasesDirectoryPathKeyName,
+      path.join(process.env.HOME, app.privateAliasesDirectoryName));
+  }
+  // Add setting key for public aliases if it doesn't exist:
+  if (!settings.keys().some((strKey) => strKey === app.publicAliasesDirectoryPathKeyName)) {
+    settings.setItemSync(app.publicAliasesDirectoryPathKeyName,
+      path.join(process.env.PWD, app.publicAliasesDirectoryName));
+  }
+} catch (e) {
+  console.log('SETTINGS:', dict.program.setup.messages.storagefailed.red);
 }
 
 module.exports = settings;

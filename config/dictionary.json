@@ -1,5 +1,11 @@
 {
   "program": {
+    "setup": {
+      "messages": {
+        "storagefailed": "Could not setup storage (did you install package using sudo?)",
+        "storagepath": "Current alias directory:"
+      }
+    },
     "commands": {
       "common": {
         "messages": {
@@ -23,7 +29,8 @@
         },
         "messages": {
           "listempty": "Aliases list is empty",
-          "total": "(%s alias(es) found)"
+          "total": "(%s aliases found)",
+          "totalone": "(%s alias found)",
         }
       },
       "chdir": {

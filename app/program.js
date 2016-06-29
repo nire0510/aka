@@ -15,7 +15,7 @@ commander.run = function (args) {
     .description(pkg.description)
     .option('-C, --chdir <path>', dict.program.commands.chdir.description)
     .on('chdir', actions.chdir)
-    .on('--help', actions.version);
+    .on('--help', actions.help);
 
   commander
     .command('<alias>=<command>')
@@ -66,12 +66,14 @@ commander.run = function (args) {
         let arrAlias, strAlias, strCommand,
           objOptions = {};
 
+        // extract arguments:
         for (let i = 2; i < commander.rawArgs.length; i++) {
           if (commander.rawArgs[i].indexOf('=') !== -1) {
             arrAlias = commander.rawArgs[i].split('=');
             strAlias = arrAlias[0];
             strCommand = arrAlias[1];
           }
+          // has description:
           else if (commander.rawArgs[i] === '-d' || commander.rawArgs[i] === '--description' &&
             i + 1 < commander.rawArgs.length) {
             objOptions.description = commander.rawArgs[i + 1];
