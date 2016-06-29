@@ -8,8 +8,13 @@ var storage = require('node-persist');
 var aliases;
 
 // make sure the aliases directory exists:
-if (!aux.isDirectory(settings.getItemSync(app.privateAliasesDirectoryPathKeyName))) {
-  aux.createDirectory(settings.getItemSync(app.privateAliasesDirectoryPathKeyName));
+try {
+  if (!aux.isDirectory(settings.getItemSync(app.privateAliasesDirectoryPathKeyName))) {
+    aux.createDirectory(settings.getItemSync(app.privateAliasesDirectoryPathKeyName));
+  }
+} catch (e) {
+  console.error('ALIASES:', dict.program.setup.messages.directoryfailed.red);
+  process.exit(0);
 }
 
 try {

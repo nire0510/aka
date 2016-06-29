@@ -7,8 +7,13 @@ var storage = require('node-persist');
 var galiases;
 
 // make sure the aliases directory exists:
-if (!aux.isDirectory(settings.getItemSync(app.publicAliasesDirectoryPathKeyName))) {
-  aux.createDirectory(settings.getItemSync(app.publicAliasesDirectoryPathKeyName));
+try {
+  if (!aux.isDirectory(settings.getItemSync(app.publicAliasesDirectoryPathKeyName))) {
+    aux.createDirectory(settings.getItemSync(app.publicAliasesDirectoryPathKeyName));
+  }
+} catch (e) {
+  console.error('GALIASES:', dict.program.setup.messages.directoryfailed.red);
+  process.exit(0);
 }
 
 try {
@@ -18,7 +23,7 @@ try {
   });
   galiases.initSync();
 } catch (e) {
-  console.log(dict.program.setup.messages.storagefailed.red);
+  console.log('GALIASES:', dict.program.setup.messages.storagefailed.red);
   process.exit(0);
 }
 

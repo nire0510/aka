@@ -3,7 +3,8 @@
     "setup": {
       "messages": {
         "storagefailed": "Could not setup storage (did you install package using sudo?)",
-        "storagepath": "Current alias directory:"
+        "storagepath": "Current alias directory:",
+        "directoryfailed": "Failed to create storage directory (did you install package using sudo?)"
       }
     },
     "commands": {

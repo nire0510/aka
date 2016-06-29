@@ -23,8 +23,8 @@ try {
   }
   // Add setting key for public aliases if it doesn't exist:
   if (!settings.keys().some((strKey) => strKey === app.publicAliasesDirectoryPathKeyName)) {
-    let strModulePath = require.resolve('as-known-as')
-      .substr(0, require.resolve('as-known-as').lastIndexOf('/'));
+    let execSync = require('child_process').execSync,
+      strModulePath = `${execSync('npm root -g')}/as-known-as`;
 
     settings.setItemSync(app.publicAliasesDirectoryPathKeyName,
       path.join(strModulePath, app.publicAliasesDirectoryName));
