@@ -23,8 +23,11 @@ try {
   }
   // Add setting key for public aliases if it doesn't exist:
   if (!settings.keys().some((strKey) => strKey === app.publicAliasesDirectoryPathKeyName)) {
+    let strModulePath = require.resolve('as-known-as')
+      .substr(0, require.resolve('as-known-as').lastIndexOf('/'));
+
     settings.setItemSync(app.publicAliasesDirectoryPathKeyName,
-      path.join(process.env.PWD, app.publicAliasesDirectoryName));
+      path.join(strModulePath, app.publicAliasesDirectoryName));
   }
 } catch (e) {
   console.log('SETTINGS:', dict.program.setup.messages.storagefailed.red);
