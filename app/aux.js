@@ -1,6 +1,7 @@
 'use strict';
 
 var fs = require('fs');
+var os = require('os');
 var path = require('path');
 
 class AUX {
@@ -22,7 +23,7 @@ class AUX {
    * @returns {void|string|XML|*}
    */
   static expandTilde (strPath) {
-    return strPath.replace('~', process.env.HOME || process.env.USERPROFILE)
+    return strPath.replace('~', os.homedir());
   }
 
   /**
@@ -75,3 +76,4 @@ class AUX {
 }
 
 module.exports = AUX;
+
