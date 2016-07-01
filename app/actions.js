@@ -87,7 +87,7 @@ var actions = {
    * @param {object} objOptions Command options
    */
   move(strAlias, strNewAlias, objOptions) {
-    let objAlias = actions.getAlias(strAlias, null, true);
+    let objAlias = actions.getAlias(strAlias, objOptions, true);
 
     // alias not found:
     if (!objAlias) {
@@ -121,7 +121,7 @@ var actions = {
    * @param {boolean} blnMute Indicates whether not to show feedback
    */
   upsert(strAlias, strCommand, objOptions, blnMute) {
-    let objAlias = actions.getAlias(strAlias, null, false),
+    let objAlias = actions.getAlias(strAlias, objOptions, false),
       objNewAlias = new Alias(strAlias,
         strCommand,
         objOptions.description && typeof objOptions.description === 'string' ? objOptions.description : null);
@@ -144,7 +144,7 @@ var actions = {
    * @param {boolean} blnShowError Indicates whether to show and error if alias doesn't exist
    */
   getAlias(strAlias, objOptions, blnShowError) {
-    let objAlias = objOptions.global ? galiases.getItemSync(strAlias) : aliases.getItemSync(strAlias);
+    let objAlias = objOptions && objOptions.global ? galiases.getItemSync(strAlias) : aliases.getItemSync(strAlias);
 
     // feedback:
     if (!objAlias && blnShowError) {

@@ -17,15 +17,6 @@ class AUX {
   }
 
   /**
-   * Replace tilde in path to absolute home directory path
-   * @param strPath
-   * @returns {void|string|XML|*}
-   */
-  static expandTilde (strPath) {
-    return strPath.replace('~', process.env.HOME || process.env.USERPROFILE)
-  }
-
-  /**
    * Checks if path is a directory or if it doesn't exist yet
    * @param {string} strPathName Path
    * @returns {boolean} True if path is directory, false otherwise
