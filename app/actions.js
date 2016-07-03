@@ -381,9 +381,12 @@ var actions = {
               };
               break;
           }
-          
-          arrQuestions.push(objQuestion);
-          intCounter++;
+
+          // Add question only if binding doesn't exist in questions array yet (repeated bindings):
+          if (arrQuestions.some((objQuestion) => objQuestion.name === arrBinding[0]) === false) {
+            arrQuestions.push(objQuestion);
+            intCounter++;
+          }
           arrBinding = regexp.exec(objAlias.command);
         }
 
