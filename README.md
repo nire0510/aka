@@ -32,7 +32,7 @@ It's because of these reasons that **AKA** provides a better alternative to the 
 * `[...]` - optional value
 
 ### Examples
-* `aka my-ip="curl http://ifconfig.me/ip" -d "get my public ip address"` - adds a new **my-ip** alias
+* `aka my-ip="dig +short myip.opendns.com @resolver1.opendns.com" -d "get my public ip address"` - adds a new **my-ip** alias
   with description. Description & command should be surrounded with quotes
 * `aka ls ip` - searches for all aliases which contains **ip** in either alias or description
 * `aka x my-ip` - execute **my-ip** alias (you can also omit the `x` if no options specified)

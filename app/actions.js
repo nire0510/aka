@@ -61,11 +61,35 @@ var actions = {
       }
     });
 
-    // print total:
-    console.log();
-    console.log(intCounter === 1 ?
-      dict.program.commands.list.messages.totalone :
-      dict.program.commands.list.messages.total, intCounter.toString().bold);
+    if (intCounter === 0 && !objOptions.global) {
+      inquirer.prompt([{
+        type: 'confirm',
+        name: 'global',
+        message: dict.program.commands.list.messages.showglobal,
+        default: 'y'
+      }]).then(function (answers) {
+        // confirmed:
+        if (answers.global) {
+          objOptions.global = true;
+          actions.list(strFilter, objOptions);
+          return;
+        }
+        else {
+          // print total:
+          console.log();
+          console.log(intCounter === 1 ?
+            dict.program.commands.list.messages.totalone :
+            dict.program.commands.list.messages.total, intCounter.toString().bold);
+        }
+      });
+    }
+    else {
+      // print total:
+      console.log();
+      console.log(intCounter === 1 ?
+        dict.program.commands.list.messages.totalone :
+        dict.program.commands.list.messages.total, intCounter.toString().bold);
+    }
   },
 
   /**
@@ -212,7 +236,8 @@ var actions = {
    * @param {object} objOptions Command options
    */
   execute(strAlias, objOptions) {
-    let objAlias = actions.getAlias(strAlias, objOptions, false);
+    let objAlias = actions.getAlias(strAlias, objOptions, false),
+      repo = objOptions.global ? galiases : aliases;
 
     // alias found:
     if (objAlias) {
@@ -235,7 +260,7 @@ var actions = {
       let arrAliases = [];
 
       // print similar aliases:
-      aliases.forEach(function(key, value) {
+      repo.forEach(function(key, value) {
         // display command if not filter specified or filter matches command alias:
         if (key.indexOf(strAlias) !== -1 ||
           (value.description && value.description.indexOf(strAlias) !== -1)) {
@@ -245,12 +270,28 @@ var actions = {
           });
         }
       });
-      // add quit option:
+      // some aliases found - add quit option:
       if (arrAliases.length > 0) {
+        // separator:
+        arrAliases.push(new inquirer.Separator());
+        if (!objOptions.global) {
+          // search galiases:
+          arrAliases.push({
+            name: dict.program.commands.common.messages.global,
+            value: 'global'
+          });
+        }
+        // quit
         arrAliases.push({
           name: dict.program.commands.execute.messages.quit,
           value: 'quit'
         });
+      }
+      // no alias found, go automatically to galiases:
+      else if (!objOptions.global) {
+        objOptions.global = true;
+        actions.execute(strAlias, objOptions);
+        return;
       }
 
       // similar aliases not found:
@@ -266,8 +307,19 @@ var actions = {
           choices: arrAliases,
           message: dict.program.commands.execute.messages.aliaseslike
         }]).then(function (answers) {
-          // confirmed:
-          if (answers.alias && answers.alias !== 'quit') {
+          if (answers.alias) {
+            // quit:
+            if (answers.alias === 'quit') {
+              return;
+            }
+
+            // search globals:
+            if (answers.alias === 'global') {
+              objOptions.global = true;
+              actions.execute(strAlias, objOptions);
+              return;
+            }
+
             // execute:
             if (/[{]{2}.+[}]{2}/.test(answers.alias.command)) {
               _parseBinding(answers.alias).then(

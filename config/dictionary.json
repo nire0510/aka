@@ -11,7 +11,8 @@
       "common": {
         "messages": {
           "idnotfound": "Could not found alias %s",
-          "commandnotfound": "No command matches your input"
+          "commandnotfound": "No command matches your input",
+          "global": "search in the global aliases repository"
         }
       },
       "version": {
@@ -26,13 +27,13 @@
       "list": {
         "description": "show all aliases with optional filter",
         "options": {
-          "command": "display commands as well",
-          "global": "search in the global aliases repository"
+          "command": "display commands as well"
         },
         "messages": {
           "listempty": "Aliases list is empty",
           "total": "(%s aliases found)",
-          "totalone": "(%s alias found)"
+          "totalone": "(%s alias found)",
+          "showglobal": "No alias found. Would you like to search in global aliases repository?"
         }
       },
       "chdir": {
@@ -85,7 +86,8 @@
         "messages": {
           "noalias": "Alias not found:",
           "aliaseslike": "Alias not found. Did you mean one of these?",
-          "quit": "None of the above, quit please",
+          "quit": "None of the above, quit",
+          "global": "Show global aliases",
           "bindingfailed": "Failed to parse command binding"
         }
       }
