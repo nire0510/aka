@@ -1,0 +1,6 @@
+{
+  "alias":"proc-use",
+  "command":"fuser {{File path?|input}}",
+  "description":"print all processes which are locking the file",
+  "timestamp":"2016-06-28T08:49:10.306Z"
+}

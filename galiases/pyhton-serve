@@ -1,0 +1,6 @@
+{
+  "alias":"python-serve",
+  "command":"python -m SimpleHTTPServer",
+  "description":"run built-in php web server at http://localhost:8000/",
+  "timestamp":"2016-06-28T08:49:10.306Z"
+}

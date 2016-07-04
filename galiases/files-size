@@ -1,0 +1,6 @@
+{
+  "alias":"files-size",
+  "command":"du -ah {{Directory path?|input|./}} | grep -v \"/$\" | sort -r",
+  "description":"list all directory files recursively sorted by file size",
+  "timestamp":"2016-06-28T08:49:10.306Z"
+}

@@ -58,6 +58,7 @@ Parameters binding makes it even easier to execute aliases, by providing help an
     - **options**  
         - case `list` - semicolon separated list of strings, required only if type is `list`  
         - case `confirm` - a value which will be appended to the command in case of confirmation  
+        - case `input` - default value
         
 ### Global Aliases
 In addition to the aliases you yourself, there are global aliases which come built-in with this tool.  

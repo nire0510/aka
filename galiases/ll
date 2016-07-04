@@ -1,6 +1,6 @@
 {
   "alias":"ll",
   "command":"ls -la",
-  "description":"long listing",
+  "description":"long listing directory contents",
   "timestamp":"2016-06-28T08:49:10.306Z"
 }

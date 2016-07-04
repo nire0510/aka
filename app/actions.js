@@ -364,6 +364,10 @@ var actions = {
                 message: arrBindingParts[0],
                 type: arrBindingParts[1]
               };
+              // default option:
+              if (arrBindingParts.length === 3) {
+                objQuestion.default = arrBindingParts[2];
+              }
               break;
             case 'list':
               objQuestion = {
@@ -427,7 +431,7 @@ var actions = {
         [];
 
       // display command:
-      console.log(strFullCommand);
+      console.log(strFullCommand.bold.magenta, objAlias.description);
       console.log();
 
       // do not execute function:
