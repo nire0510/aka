@@ -455,22 +455,39 @@ var actions = {
    * @private
    */
   shell(strCommand, arrOpts, fncCallback) {
-    const spawn = require('child_process').spawn;
-    var proc;
+    // if (arrOpts.some((strOpt) => strOpt === '|')) {
+    //   let exec = require('child_process').exec,
+    //     strFullCommand = `${strCommand} ${arrOpts.join(' ')}`;
+    //
+    //   exec(strFullCommand, function (err, stdout, stderr) {
+    //     if (err) {
+    //       throw err;
+    //     }
+    //
+    //     console.log(stdout);
+    //   });
+    // }
+    // else {
+      let spawn = require('child_process').spawn,
+        proc;
 
-    process.stdin.pause();
-    process.stdin.setRawMode(false);
+      process.stdin.pause();
+      process.stdin.setRawMode(false);
 
-    proc = spawn(strCommand, arrOpts, {
-      stdio: [0, 1, 2]
-    });
+      proc = spawn(strCommand, arrOpts, {
+        stdio: [process.stdin, process.stdout, 'pipe'],
+        cwd: process.env.PWD,
+        shell: true,
+        env: process.env
+      });
 
-    return proc.on('exit', function() {
-      process.stdin.setRawMode(true);
-      process.stdin.resume();
+      return proc.on('exit', function() {
+        process.stdin.setRawMode(true);
+        process.stdin.resume();
 
-      return fncCallback();
-    });
+        return fncCallback();
+      });
+    // }
   }
 };
 
