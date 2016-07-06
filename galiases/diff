@@ -2,5 +2,6 @@
   "alias":"diff",
   "command":"vimdiff {{First file path?|input}} {{Second file path?|input}}",
   "description":"compare between two files",
+  "interactive":true,
   "timestamp":"2016-06-28T08:49:10.306Z"
 }

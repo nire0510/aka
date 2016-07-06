@@ -2,5 +2,6 @@
   "alias":"live-log",
   "command":"tail -f {{File path?|input}}",
   "description":"print the last part (refresh as the file grows)",
+  "interactive":true,
   "timestamp":"2016-06-28T08:49:10.306Z"
 }

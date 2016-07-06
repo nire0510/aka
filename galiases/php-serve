@@ -2,5 +2,6 @@
   "alias":"php-serve",
   "command":"php -S localhost:{{Port number|input|8000}}",
   "description":"run built-in php web server",
+  "interactive":true,
   "timestamp":"2016-06-28T08:49:10.306Z"
 }

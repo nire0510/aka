@@ -148,7 +148,8 @@ var actions = {
     let objAlias = actions.getAlias(strAlias, objOptions, false),
       objNewAlias = new Alias(strAlias,
         strCommand,
-        objOptions.description && typeof objOptions.description === 'string' ? objOptions.description : null);
+        objOptions.description && typeof objOptions.description === 'string' ? objOptions.description : null,
+        objOptions.interactive || false);
 
     // upsert:
     aliases.setItem(strAlias, objNewAlias.asJSON());
@@ -260,7 +261,7 @@ var actions = {
       let arrAliases = [];
 
       // print similar aliases:
-      repo.forEach(function(key, value) {
+      repo.forEach(function (key, value) {
         // display command if not filter specified or filter matches command alias:
         if (key.indexOf(strAlias) !== -1 ||
           (value.description && value.description.indexOf(strAlias) !== -1)) {
@@ -340,12 +341,42 @@ var actions = {
     }
 
     /**
+     * execute command
+     * @param {object} objAlias Alias object
+     * @param {object} objOptions Command options
+     * @private
+     */
+    function _exec(objAlias, objOptions) {
+      const strFullCommand = `${objAlias.command}${objOptions.params ? ' ' + objOptions.params : ''}`;
+      const strCommand = strFullCommand.indexOf(' ') > 0 ?
+        strFullCommand.substr(0, strFullCommand.indexOf(' ')) :
+        strFullCommand;
+      const arrOpts = strFullCommand.trim().indexOf(' ') > 0 ?
+        sargs(strFullCommand.substr(strFullCommand.indexOf(' ') + 1)) :
+        [];
+
+      // display command:
+      console.log(strFullCommand.bold.magenta, objAlias.description || '');
+      console.log();
+
+      // do not execute function:
+      if (objOptions.dry) {
+        return;
+      }
+
+      // parse command:
+      aux.shell(strCommand, arrOpts, objAlias.interactive, function () {
+        return process.exit();
+      });
+    }
+
+    /**
      * Replaces binding with user input
      * @param objAlias Alias object
      * @return {string} Alias after binding parsing
      * @private
      */
-    function _parseBinding (objAlias) {
+    function _parseBinding(objAlias) {
       let arrQuestions = [],
         regexp = /{{(.+?)}}/g,
         arrBinding,
@@ -414,80 +445,6 @@ var actions = {
         }
       });
     }
-
-    /**
-     * execute command
-     * @param {object} objAlias Alias object
-     * @param {object} objOptions Command options
-     * @private
-     */
-    function _exec(objAlias, objOptions) {
-      const strFullCommand = `${objAlias.command}${objOptions.params ? ' ' + objOptions.params : ''}`;
-      const strCommand = strFullCommand.indexOf(' ') > 0 ?
-        strFullCommand.substr(0, strFullCommand.indexOf(' ')) :
-        strFullCommand;
-      const arrOpts = strFullCommand.trim().indexOf(' ') > 0 ?
-        sargs(strFullCommand.substr(strFullCommand.indexOf(' ') + 1)) :
-        [];
-
-      // display command:
-      console.log(strFullCommand.bold.magenta, objAlias.description);
-      console.log();
-
-      // do not execute function:
-      if (objOptions.dry) {
-        return;
-      }
-
-      // parse command:
-      actions.shell(strCommand, arrOpts, function () {
-        return process.exit();
-      });
-    }
-  },
-
-  /**
-   * Creates a shell
-   * @param {string} strCommand Command
-   * @param {object[]} arrOpts Command pptions
-   * @param {function} fncCallback Callback function
-   * @returns {*}
-   * @private
-   */
-  shell(strCommand, arrOpts, fncCallback) {
-    // if (arrOpts.some((strOpt) => strOpt === '|')) {
-    //   let exec = require('child_process').exec,
-    //     strFullCommand = `${strCommand} ${arrOpts.join(' ')}`;
-    //
-    //   exec(strFullCommand, function (err, stdout, stderr) {
-    //     if (err) {
-    //       throw err;
-    //     }
-    //
-    //     console.log(stdout);
-    //   });
-    // }
-    // else {
-      let spawn = require('child_process').spawn,
-        proc;
-
-      process.stdin.pause();
-      process.stdin.setRawMode(false);
-
-      proc = spawn(strCommand, arrOpts, {
-        stdio: [process.stdin, process.stdout, 'pipe'],
-        cwd: process.env.PWD,
-        shell: true,
-        env: process.env
-      });
-
-      return proc.on('exit', function() {
-        process.stdin.setRawMode(true);
-        process.stdin.resume();
-
-        return fncCallback();
-      });
-    // }
   }
 };
 

@@ -63,6 +63,54 @@ class AUX {
 
     return true;
   }
+
+  /**
+   * Creates a shell
+   * @param {string} strCommand Command
+   * @param {object[]} arrOpts Command pptions
+   * @param {boolean} blnSpawn Is spawn mode required?
+   * @param {function} fncCallback Callback function
+   * @returns {*}
+   * @private
+   */
+  static shell(strCommand, arrOpts, blnSpawn, fncCallback) {
+    if (blnSpawn) {
+      let spawn = require('child_process').spawn,
+        proc;
+
+      process.stdin.pause();
+      process.stdin.setRawMode(false);
+
+      proc = spawn(strCommand, arrOpts, {
+        stdio: [process.stdin, process.stdout, 'pipe'],
+        cwd: process.env.PWD,
+        shell: true,
+        env: process.env
+      });
+
+      return proc.on('exit', function() {
+        process.stdin.setRawMode(true);
+        process.stdin.resume();
+
+        return fncCallback();
+      });
+    }
+    else {
+      let exec = require('child_process').exec,
+        strFullCommand = `${strCommand} ${arrOpts.join(' ')}`;
+
+      exec(strFullCommand, {
+        cwd: process.env.PWD,
+        env: process.env
+      }, function (err, stdout, stderr) {
+        if (err) {
+          throw err;
+        }
+
+        console.log(stdout);
+      });
+    }
+  }
 }
 
 module.exports = AUX;

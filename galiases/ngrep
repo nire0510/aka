@@ -2,5 +2,6 @@
   "alias":"ngrep",
   "command":"ngrep -q -W byline \"^(GET|POST) .*\"",
   "description":"show all GET and POST requests",
+  "interactive":true,
   "timestamp":"2016-06-28T08:49:10.306Z"
 }

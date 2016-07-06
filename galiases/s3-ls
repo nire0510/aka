@@ -2,5 +2,6 @@
   "alias":"s3-ls",
   "command":"aws s3 ls s3://{{bucket name?|input}}",
   "description":"display s3 bucket content",
+  "interactive":false,
   "timestamp":"2016-06-28T08:49:10.306Z"
 }

@@ -21,6 +21,7 @@ commander.run = function (args) {
     .command('<alias>=<command>')
     .description(dict.program.commands.upsert.description)
     .option('-d, --description <description>', dict.program.commands.upsert.options.description)
+    .option('-i, --interactive', dict.program.commands.upsert.options.interactive)
     .action(actions.upsert);
 
   commander

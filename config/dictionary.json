@@ -55,7 +55,8 @@
         "description": "add a new alias or update existing one",
         "options": {
           "alias": "command alias",
-          "description": "short description"
+          "description": "short description",
+          "interactive": "interactive command (e.g. ssh -or- output > 200KB)"
         },
         "messages": {
           "added": "Alias added successfully: %s",

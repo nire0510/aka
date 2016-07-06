@@ -17,10 +17,10 @@ It's because of these reasons that **AKA** provides a better alternative to the 
 
 ### Commands
 * `<alias>=<command> [options]`         add a new alias or update existing one  
-* `move|mv [options] <from> <to>`      rename an existing alias and/or update its description
+* `move|mv [options] <from> <to>`      rename an existing alias and/or update its description  
 * `remove|rm [options] [alias...]`  remove a one or more aliases  
 * `list|ls [options] [filter]`   show all aliases with optional filter  
-* `execute|x <alias>`              execute an alias
+* `execute|ex <alias>`              execute an alias
 
 ### Options
 `-h, --help`          output usage information  
@@ -30,6 +30,11 @@ It's because of these reasons that **AKA** provides a better alternative to the 
 ### Cues
 * `<...>` - mandatory value
 * `[...]` - optional value
+
+### Interactive Commands
+When adding new aliases, you need to let AKA know if the command is interactive, which means it accepts user input, e.g ssh.
+Another scenario you should flag your command as interactive is when you expect max 200KB output. To do that, append
+`-i` or `--interactive` when adding the alias.
 
 ### Examples
 * `aka my-ip="dig +short myip.opendns.com @resolver1.opendns.com" -d "get my public ip address"` - adds a new **my-ip** alias

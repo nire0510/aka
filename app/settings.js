@@ -14,8 +14,6 @@ try {
   });
   settings.initSync();
 
-  // Migrate
-
   // Add setting key for private aliases if it doesn't exist:
   if (!settings.keys().some((strKey) => strKey === app.privateAliasesDirectoryPathKeyName)) {
     settings.setItemSync(app.privateAliasesDirectoryPathKeyName,

@@ -2,5 +2,6 @@
   "alias":"scp",
   "command":"scp {{Is it a directory?|confirm|-r}} {{Local file path?|input}} {{Username?|input}}@{{Host?|input}}:{{Remote target path?|input}}",
   "description":"copy a local directory or file to remote machine",
+  "interactive":false,
   "timestamp":"2016-06-28T08:49:10.306Z"
 }
