@@ -1,11 +1,10 @@
 'use strict';
 
 class Alias {
-  constructor (strAlias, strCommand, strDescription, blnInteractive) {
+  constructor (strAlias, strCommand, strDescription) {
     this.alias = strAlias;
     this.command = strCommand;
     this.description = strDescription || '';
-    this.interactive = blnInteractive || false;
     this.timestamp = new Date();
   }
 
@@ -14,7 +13,6 @@ class Alias {
       alias: this.alias,
       command: this.command,
       description: this.description,
-      interactive: this.interactive,
       timestamp: this.timestamp
     }
   }

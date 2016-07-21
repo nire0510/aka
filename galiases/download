@@ -2,6 +2,5 @@
   "alias":"download",
   "command":"curl -LO {{File URL?|input}}",
   "description":"download a file from the internet",
-  "interactive":true,
   "timestamp":"2016-06-28T08:49:10.306Z"
 }

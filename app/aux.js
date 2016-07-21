@@ -2,6 +2,7 @@
 
 var fs = require('fs');
 var path = require('path');
+var sargs = require('string-argv');
 
 class AUX {
   /**
@@ -68,15 +69,18 @@ class AUX {
    * Creates a shell
    * @param {string} strCommand Command
    * @param {object[]} arrOpts Command pptions
-   * @param {boolean} blnSpawn Is spawn mode required?
-   * @param {function} fncCallback Callback function
    * @returns {*}
    * @private
    */
-  static shell(strCommand, arrOpts, blnSpawn, fncCallback) {
-    if (blnSpawn) {
-      let spawn = require('child_process').spawn,
-        proc;
+  static shell(strCommand, arrOpts, fncCallback) {
+    let proc;
+
+    process.stdin.pause();
+    process.stdin.setRawMode(false);
+
+    // command doesn't contain pipe(s):
+    if (arrOpts.indexOf('|') === -1) {
+      const spawn = require('child_process').spawn;
 
       process.stdin.pause();
       process.stdin.setRawMode(false);
@@ -94,9 +98,40 @@ class AUX {
 
         return fncCallback();
       });
+
+      // let strFullCommand = `${strCommand} ${arrOpts.join(' ')}`,
+      //   arrSubFullCommands = strFullCommand.split(' | ');
+      //
+      // arrSubFullCommands = arrSubFullCommands.map((strSubFullCommand, index) => {
+      //   strSubFullCommand = strSubFullCommand.trim();
+      //
+      //   let strCommand = strSubFullCommand.indexOf(' ') > 0 ?
+      //     strSubFullCommand.substr(0, strSubFullCommand.indexOf(' ')) :
+      //     strSubFullCommand;
+      //   let arrOpts = strSubFullCommand.indexOf(' ') > 0 ?
+      //     sargs(strSubFullCommand.substr(strSubFullCommand.indexOf(' ') + 1)) :
+      //     [];
+      //
+      //   return spawn(strCommand, arrOpts, {
+      //     cwd: process.env.PWD,
+      //     env: process.env
+      //   });
+      // });
+      //
+      // process.stdin.pipe(arrSubFullCommands[0].stdin);
+      // for (var i = 0; i < arrSubFullCommands.length - 1; i++) {
+      //   arrSubFullCommands[i].stdout.pipe(arrSubFullCommands[i + 1].stdin);
+      // }
+      // arrSubFullCommands[i].stdout.pipe(process.stdout);
+      // arrSubFullCommands[i].on('exit', function() {
+      //   process.stdin.setRawMode(true);
+      //   process.stdin.resume();
+      //
+      //   return fncCallback();
+      // });
     }
     else {
-      let exec = require('child_process').exec,
+      const exec = require('child_process').exec,
         strFullCommand = `${strCommand} ${arrOpts.join(' ')}`;
 
       exec(strFullCommand, {
@@ -104,11 +139,13 @@ class AUX {
         env: process.env
       }, function (err, stdout, stderr) {
         if (err) {
+          console.error(stderr);
           throw err;
         }
 
         console.log(stdout);
       });
+
     }
   }
 }

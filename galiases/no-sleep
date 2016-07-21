@@ -2,6 +2,5 @@
   "alias":"no-sleep",
   "command":"caffeinate",
   "description":"keep your Mac from falling asleep (MAC)",
-  "interactive":false,
   "timestamp":"2016-06-28T08:49:10.306Z"
 }

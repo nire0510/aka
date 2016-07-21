@@ -2,6 +2,5 @@
   "alias":"ip",
   "command":"dig +short myip.opendns.com @resolver1.opendns.com",
   "description":"get my public ip address",
-  "interactive":false,
   "timestamp":"2016-06-28T08:49:10.306Z"
 }

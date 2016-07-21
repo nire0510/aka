@@ -14,6 +14,8 @@ commander.run = function (args) {
     .version(pkg.version)
     .description(pkg.description)
     .option('-C, --chdir <path>', dict.program.commands.chdir.description)
+    .option('-w, --website', dict.program.commands.website.description)
+    .on('website', actions.website)
     .on('chdir', actions.chdir)
     .on('--help', actions.help);
 
@@ -21,7 +23,6 @@ commander.run = function (args) {
     .command('<alias>=<command>')
     .description(dict.program.commands.upsert.description)
     .option('-d, --description <description>', dict.program.commands.upsert.options.description)
-    .option('-i, --interactive', dict.program.commands.upsert.options.interactive)
     .action(actions.upsert);
 
   commander

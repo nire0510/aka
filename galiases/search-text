@@ -2,6 +2,5 @@
   "alias":"search-text",
   "command":"grep -rl {{String to search?|input}} {{Directory path?|input}",
   "description":"search for all files in a directory which contain text",
-  "interactive":false,
   "timestamp":"2016-06-28T08:49:10.306Z"
 }

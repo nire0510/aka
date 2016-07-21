@@ -42,6 +42,9 @@
           "changed": "Aliases directory changed to"
         }
       },
+      "website": {
+        "description": "open AKA website"
+      },
       "move": {
         "description": "rename an alias and/or update its description",
         "options": {
@@ -55,8 +58,7 @@
         "description": "add a new alias or update existing one",
         "options": {
           "alias": "command alias",
-          "description": "short description",
-          "interactive": "interactive command (e.g. ssh -or- output > 200KB)"
+          "description": "short description"
         },
         "messages": {
           "added": "Alias added successfully: %s",

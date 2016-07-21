@@ -31,11 +31,6 @@ It's because of these reasons that **AKA** provides a better alternative to the 
 * `<...>` - mandatory value
 * `[...]` - optional value
 
-### Interactive Commands
-When adding new aliases, you need to let AKA know if the command is interactive, which means it accepts user input, e.g ssh.
-Another scenario you should flag your command as interactive is when you expect max 200KB output. To do that, append
-`-i` or `--interactive` when adding the alias.
-
 ### Examples
 * `aka my-ip="dig +short myip.opendns.com @resolver1.opendns.com" -d "get my public ip address"` - adds a new **my-ip** alias
   with description. Description & command should be surrounded with quotes
@@ -94,3 +89,4 @@ To do this, clone the project, then add your alias to the **galiases** directory
     or change your global `node_modules` directory to a path you have **write** access to
 * If you get **Permission denied (publickey)** error while running ssh command, make sure your public key path is
 absolute (i.e. do not start path with tilde ~)
+* Notice that if a command contains pipes, it will run in EXEC mode, which basically means it's output is limited to 200KB

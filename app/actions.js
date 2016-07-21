@@ -12,26 +12,38 @@ var settings = require('./settings');
 var sargs = require('string-argv');
 
 var actions = {
+  /**
+   * Customized help screen
+   */
   help() {
     var execSync = require('child_process').execSync,
       strLatestVersion;
 
-
+    // show aliases directory path:
     console.log(dict.program.setup.messages.storagepath,
       settings.getItemSync(app.privateAliasesDirectoryPathKeyName).white.bold);
 
-    // check latest version
+    // check latest version:
     process.stdout.write(dict.program.commands.version.messages.checking);
     strLatestVersion = execSync('npm show as-known-as version');
+    // new version available:
     if (`${strLatestVersion}`.indexOf(pkg.version) !== 0) {
       console.log(dict.program.commands.version.messages.newversion.green,
         `${strLatestVersion}`.replace( /[^0-9\.]/ , '').bold.green);
       console.log(dict.program.commands.version.messages.upgrade,
         dict.program.commands.version.messages.command.bold);
     }
+    // up-to-date:
     else {
       console.log(dict.program.commands.version.messages.uptodate.green, pkg.version.white.bold);
     }
+  },
+
+  /**
+   * Open AKA website (on npm.js
+   */
+  website() {
+    aux.shell('open "https://www.npmjs.com/package/as-known-as"', [])
   },
 
   /**
@@ -61,6 +73,7 @@ var actions = {
       }
     });
 
+    // no aliases after filter - suggest searching global aliases:
     if (intCounter === 0 && !objOptions.global) {
       inquirer.prompt([{
         type: 'confirm',
@@ -83,8 +96,8 @@ var actions = {
         }
       });
     }
+    // print total:
     else {
-      // print total:
       console.log();
       console.log(intCounter === 1 ?
         dict.program.commands.list.messages.totalone :
@@ -93,7 +106,7 @@ var actions = {
   },
 
   /**
-   * Changes aliases directory
+   * Changes private aliases directory
    * @param {string} strTargetPath Target path
    */
   chdir(strTargetPath) {
@@ -131,7 +144,7 @@ var actions = {
           objAlias.description
       }, true);
 
-    // feedback:
+    // command feedback:
     console.log(dict.program.commands.move.messages.moved.green, strNewAlias ?
       strNewAlias.bold.white :
       strAlias.bold.white
@@ -142,19 +155,18 @@ var actions = {
    * Adds a new alias or updates an existing one
    * @param {string[]} arrCommand Command as an array of words
    * @param {object} objOptions Command options
-   * @param {boolean} blnMute Indicates whether not to show feedback
+   * @param {boolean} blnMuted Indicates whether not to show feedback
    */
-  upsert(strAlias, strCommand, objOptions, blnMute) {
+  upsert(strAlias, strCommand, objOptions, blnMuted) {
     let objAlias = actions.getAlias(strAlias, objOptions, false),
       objNewAlias = new Alias(strAlias,
         strCommand,
-        objOptions.description && typeof objOptions.description === 'string' ? objOptions.description : null,
-        objOptions.interactive || false);
+        objOptions.description && typeof objOptions.description === 'string' ? objOptions.description : null);
 
     // upsert:
     aliases.setItem(strAlias, objNewAlias.asJSON());
     // feedback:
-    if (!blnMute) {
+    if (!blnMuted) {
       console.log(!objAlias ?
           dict.program.commands.upsert.messages.added.green :
           dict.program.commands.upsert.messages.updated.green,
@@ -183,6 +195,7 @@ var actions = {
    * Removes an alias
    * @param {string[]} arrAliases Array of aliases
    * @param {object} objOptions Command options
+   * @param {boolean} blnMuted Indicates whether not to show feedback
    */
   remove (arrAliases, objOptions, blnMuted) {
     // remove all aliases flag:
@@ -242,6 +255,7 @@ var actions = {
 
     // alias found:
     if (objAlias) {
+      // check if it has bindings:
       if (/[{]{2}.+[}]{2}/.test(objAlias.command)) {
         _parseBinding(objAlias).then(
           (objParsedAlias) => {
@@ -365,7 +379,7 @@ var actions = {
       }
 
       // parse command:
-      aux.shell(strCommand, arrOpts, objAlias.interactive, function () {
+      aux.shell(strCommand, arrOpts, function () {
         return process.exit();
       });
     }

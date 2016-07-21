@@ -2,6 +2,5 @@
   "alias":"calc",
   "command":"bc",
   "description":"command line calculator",
-  "interactive":true,
   "timestamp":"2016-06-28T08:49:10.306Z"
 }

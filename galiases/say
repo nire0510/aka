@@ -2,6 +2,5 @@
   "alias":"say",
   "command":"say {{What do you want me to say?|input}}",
   "description":"make your Mac say anything you want (MAC)",
-  "interactive":false,
   "timestamp":"2016-06-28T08:49:10.306Z"
 }
