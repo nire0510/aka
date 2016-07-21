@@ -81,7 +81,7 @@ To do this, clone the project, then add your alias to the **galiases** directory
 ### Tips & Tricks
 * Call any of the commands with `-h` parameter to see its help
 * Always use absolute paths (avoid shortcuts symbols such as ~, .. etc)
-* You do not have to remember command's exact alias. If no command found with the exact alias, similar options
+* You do not have to remember command's exact alias. If no command with the exact alias was found, similar options
     will be displayed
 * Change **AKA** aliases directory to Dropbox, Google Drive or any other online storage service, to share your aliases
     with all your workstations
