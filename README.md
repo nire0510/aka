@@ -35,20 +35,20 @@ It's because of these reasons that **AKA** provides a better alternative to the 
 * `aka my-ip="dig +short myip.opendns.com @resolver1.opendns.com" -d "get my public ip address"` - adds a new **my-ip** alias
   with description. Description & command should be surrounded with quotes
 * `aka ls ip` - searches for all aliases which contains **ip** in either alias or description
-* `aka x my-ip` - execute **my-ip** alias (you can also omit the `x` if no options specified)
+* `aka ex my-ip` - execute **my-ip** alias (you can also omit the `x` if no options specified)
 * `aka rm -rf` - removes all aliases
 * `aka --chdir /Users/nir/Dropbox/aka` - changes **AKA** aliases directory
 
 ### Advanced Usage
 1. **Dynamic command parameters** - Use command option -p to leave out parameters which you want to add dynamically, for example:  
 `aka ls="ls -la" -d "display folder content as a list" ` and then use as follows:  
-    `aka x ls -p "some-path"`
+    `aka ex ls -p "some-path"`
 2. **Dynamic command parameters binding** - Use command option -b to flag a command with bind-able parameters.  
 Parameters binding makes it even easier to execute aliases, by providing help and even set of valid options, for example:  
 `aka scale-image="convert {{Source image path?|input}} -resize {{Scale rate (in percents)?|input}} {{Scaled image path?|input}}"
     -d "scale an image proportionally"`
      and then the use as follows:  
-    `aka x scale-image`  
+    `aka ex scale-image`  
 
   Dynamic command parameters binding format:  
     - `{{description|type[|options]}}`  
@@ -63,7 +63,7 @@ Parameters binding makes it even easier to execute aliases, by providing help an
 ### Global Aliases
 In addition to the aliases you yourself, there are global aliases which come built-in with this tool.  
 To see those aliases or to execute them, add `-g` to the `ls` or `x` command respectively, for example:  
-`aka ls -g` or `aka x zip`.
+`aka ls -g` or `aka ex zip`.
 
 #### Adding Global Aliases
 If you have an alias you find very useful, you can suggest adding it to the global aliases repository.  
