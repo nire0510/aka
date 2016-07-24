@@ -1,0 +1,6 @@
+{
+  "alias":"tz-ubuntu",
+  "command":"dpkg-reconfigure tzdata",
+  "description":"change time-zone settings on Ubuntu",
+  "timestamp":"2016-06-28T08:49:10.306Z"
+}

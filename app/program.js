@@ -50,7 +50,7 @@ commander.run = function (args) {
 
   commander
     .command('execute <alias>')
-    .alias('x')
+    .alias('ex')
     .option('-d, --dry', dict.program.commands.execute.options.dry)
     .option('-g, --global', dict.program.commands.execute.options.global)
     .option('-p, --params <params...>', dict.program.commands.execute.options.params)
