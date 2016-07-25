@@ -152,6 +152,30 @@ var actions = {
   },
 
   /**
+   * Copies an alias
+   * @param {string} strAlias Current alias
+   * @param {string} strNewAlias New alias
+   * @param {object} objOptions Command options
+   */
+  copy(strAlias, strNewAlias, objOptions) {
+    let objAlias = actions.getAlias(strAlias, objOptions, true);
+
+    // alias not found:
+    if (!objAlias) {
+      return;
+    }
+
+    // add new command:
+    actions.upsert(strNewAlias,
+      objAlias.command, {
+        description: objAlias.description
+      }, true);
+
+    // command feedback:
+    console.log(dict.program.commands.copy.messages.copied.green, strNewAlias.bold.white);
+  },
+
+  /**
    * Adds a new alias or updates an existing one
    * @param {string[]} arrCommand Command as an array of words
    * @param {object} objOptions Command options

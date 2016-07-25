@@ -54,6 +54,15 @@
           "moved": "Alias updated successfully: %s"
         }
       },
+      "copy": {
+        "description": "copy (clone) an existing alias",
+        "options": {
+          "global": "source alias is global"
+        },
+        "messages": {
+          "copied": "Alias copied successfully: %s"
+        }
+      },
       "upsert": {
         "description": "add a new alias or update existing one",
         "options": {

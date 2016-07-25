@@ -33,6 +33,13 @@ commander.run = function (args) {
     .action(actions.move);
 
   commander
+    .command('copy <from> <to>')
+    .alias('cp')
+    .option('-g, --global', dict.program.commands.copy.options.global)
+    .description(dict.program.commands.copy.description)
+    .action(actions.copy);
+
+  commander
     .command('list [filter]')
     .alias('ls')
     .description(dict.program.commands.list.description)

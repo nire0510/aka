@@ -18,6 +18,7 @@ It's because of these reasons that **AKA** provides a better alternative to the 
 ### Commands
 * `<alias>=<command> [options]`         add a new alias or update existing one  
 * `move|mv [options] <from> <to>`      rename an existing alias and/or update its description  
+* `copy|cp [options] <from> <to>`      copy (clone) an existing alias  
 * `remove|rm [options] [alias...]`  remove a one or more aliases  
 * `list|ls [options] [filter]`   show all aliases with optional filter  
 * `execute|ex <alias>`              execute an alias
@@ -26,6 +27,7 @@ It's because of these reasons that **AKA** provides a better alternative to the 
 `-h, --help`          output usage information  
 `-V, --version`       output the version number  
 `-C, --chdir <path>`  change the working directory  
+`-w, --website`       open AKA website  
 
 ### Cues
 * `<...>` - mandatory value
@@ -35,7 +37,7 @@ It's because of these reasons that **AKA** provides a better alternative to the 
 * `aka my-ip="dig +short myip.opendns.com @resolver1.opendns.com" -d "get my public ip address"` - adds a new **my-ip** alias
   with description. Description & command should be surrounded with quotes
 * `aka ls ip` - searches for all aliases which contains **ip** in either alias or description
-* `aka ex my-ip` - execute **my-ip** alias (you can also omit the `x` if no options specified)
+* `aka ex my-ip` - execute **my-ip** alias (you can also omit the `ex` if no options specified)
 * `aka rm -rf` - removes all aliases
 * `aka --chdir /Users/nir/Dropbox/aka` - changes **AKA** aliases directory
 
