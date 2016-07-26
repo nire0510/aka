@@ -1,0 +1,6 @@
+{
+  "alias":"xgzip",
+  "command":"tar xzfv {{Archive path?|input}}",
+  "description":"extract a gzipped archive",
+  "timestamp":"2016-06-28T08:49:10.306Z"
+}
