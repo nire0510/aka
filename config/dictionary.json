@@ -97,7 +97,7 @@
         },
         "messages": {
           "noalias": "Alias not found:",
-          "aliaseslike": "Alias not found. Did you mean one of these?",
+          "aliaseslike": "Alias not found. Did you refer to one of the following aliases?",
           "quit": "None of the above, quit",
           "global": "Show global aliases",
           "bindingfailed": "Failed to parse command binding"

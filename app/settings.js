@@ -10,7 +10,7 @@ var settings;
 // create & initialize storage:
 try {
   settings = storage.create({
-    dir: app.settingsDirectoryName
+    dir: path.join(process.env.HOME, app.settingsDirectoryName)
   });
   settings.initSync();
 

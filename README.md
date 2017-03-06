@@ -64,7 +64,7 @@ Parameters binding makes it even easier to execute aliases, by providing help an
         
 ### Global Aliases
 In addition to the aliases you yourself, there are global aliases which come built-in with this tool.  
-To see those aliases or to execute them, add `-g` to the `ls` or `x` command respectively, for example:  
+To see those aliases or to execute them, add `-g` to the `ls` or `ex` command respectively, for example:  
 `aka ls -g` or `aka ex zip`.
 
 #### Adding Global Aliases
