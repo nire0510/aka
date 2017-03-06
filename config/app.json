@@ -1,7 +1,7 @@
 {
   "privateAliasesDirectoryPathKeyName": "aliases-directory",
   "publicAliasesDirectoryPathKeyName": "galiases-directory",
-  "settingsDirectoryName": "aka",
+  "settingsDirectoryName": ".aka",
   "privateAliasesDirectoryName": ".aliases",
   "publicAliasesDirectoryName": "galiases"
 }
