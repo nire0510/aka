@@ -72,7 +72,7 @@ class AUX {
    * @returns {*}
    * @private
    */
-  static shell(strCommand, arrOpts, fncCallback) {
+  static shell(strFullCommand, strCommand, arrOpts, fncCallback) {
     let proc;
 
     process.stdin.pause();
@@ -131,8 +131,7 @@ class AUX {
       // });
     }
     else {
-      const exec = require('child_process').exec,
-        strFullCommand = `${strCommand} ${arrOpts.join(' ')}`;
+      const exec = require('child_process').exec;
 
       exec(strFullCommand, {
         cwd: process.env.PWD,
@@ -145,7 +144,6 @@ class AUX {
 
         console.log(stdout);
       });
-
     }
   }
 }

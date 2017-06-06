@@ -43,7 +43,7 @@ var actions = {
    * Open AKA website (on npm.js
    */
   website() {
-    aux.shell('open "https://www.npmjs.com/package/as-known-as"', [])
+    aux.shell('open "https://www.npmjs.com/package/as-known-as"', null, [])
   },
 
   /**
@@ -401,9 +401,8 @@ var actions = {
       if (objOptions.dry) {
         return;
       }
-
-      // parse command:
-      aux.shell(strCommand, arrOpts, function () {
+  
+      aux.shell(strFullCommand, strCommand, arrOpts, function () {
         return process.exit();
       });
     }
