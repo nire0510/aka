@@ -66,9 +66,14 @@ var actions = {
         (value.description && value.description.indexOf(strFilter) !== -1)) {
         intCounter++;
         // show alias & command:
-        console.log('*', key.bold.magenta, value.description || '');
-        if (!objOptions.command) {
-          console.log(' ', value.command.gray);
+        try {
+          console.log('*', key.bold.magenta, value.description || '');
+          if (!objOptions.command) {
+            console.log(' ', value.command.gray);
+          }
+        }
+        catch(err) {
+          console.log('*', key.bold.red, 'alias is invalid');
         }
       }
     });
@@ -110,6 +115,8 @@ var actions = {
    * @param {string} strTargetPath Target path
    */
   chdir(strTargetPath) {
+    console.log('bla');
+    
     if (aux.moveDirectoryContent(settings.getItemSync(app.privateAliasesDirectoryPathKeyName),
         strTargetPath)) {
       settings.setItemSync(app.privateAliasesDirectoryPathKeyName, strTargetPath);

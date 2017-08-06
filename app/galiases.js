@@ -24,6 +24,7 @@ try {
   });
   galiases.initSync();
 } catch (e) {
+  console.log(e);
   console.log('GALIASES:', dict.program.setup.messages.storagefailed.red);
   process.exit(0);
 }

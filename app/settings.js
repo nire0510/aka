@@ -8,7 +8,7 @@ var storage = require('node-persist');
 var settings;
 
 // create & initialize storage:
-try {
+try {  
   settings = storage.create({
     dir: path.join(process.env.HOME, app.settingsDirectoryName)
   });
@@ -27,7 +27,7 @@ try {
     settings.setItemSync(app.publicAliasesDirectoryPathKeyName,
       path.join(strModulePath, app.publicAliasesDirectoryName));
   }
-} catch (e) {
+} catch (e) {  
   console.log('SETTINGS:', dict.program.setup.messages.storagefailed.red);
   process.exit(0);
 }
