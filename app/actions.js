@@ -115,8 +115,6 @@ var actions = {
    * @param {string} strTargetPath Target path
    */
   chdir(strTargetPath) {
-    console.log('bla');
-    
     if (aux.moveDirectoryContent(settings.getItemSync(app.privateAliasesDirectoryPathKeyName),
         strTargetPath)) {
       settings.setItemSync(app.privateAliasesDirectoryPathKeyName, strTargetPath);
