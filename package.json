@@ -1,6 +1,6 @@
 {
   "name": "as-known-as",
-  "version": "0.1.47",
+  "version": "0.1.48",
   "description": "Alias Bash Command on Steroids",
   "main": "bin/index.js",
   "scripts": {
@@ -30,7 +30,7 @@
   "license": "ISC",
   "dependencies": {
     "colors": "^1.4.0",
-    "commander": "4.0.1",
+    "commander": "2.9.0",
     "inquirer": "^7.0.1",
     "node-persist": "0.0.12",
     "string-argv": "0.0.2"

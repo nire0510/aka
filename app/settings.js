@@ -1,17 +1,18 @@
-'use strict';
+const os = require('os');
+const childProcess = require('child_process');
+const path = require('path');
+const storage = require('node-persist');
+const app = require('../config/app.json');
+const dict = require('../config/dictionary.json');
 
-var app = require('../config/app.json');
-var colors = require('colors');
-var dict = require('../config/dictionary.json');
-var path = require('path');
-var os = require('os');
-var storage = require('node-persist');
-var settings;
+require('colors');
+
+let settings;
 
 // create & initialize storage:
-try {  
+try {
   settings = storage.create({
-    dir: path.join(os.homedir(), app.settingsDirectoryName)
+    dir: path.join(os.homedir(), app.settingsDirectoryName),
   });
   settings.initSync();
 
@@ -22,13 +23,14 @@ try {
   }
   // Add setting key for public aliases if it doesn't exist:
   if (!settings.keys().some((strKey) => strKey === app.publicAliasesDirectoryPathKeyName)) {
-    let execSync = require('child_process').execSync,
-      strModulePath = `${execSync('npm root -g')}/as-known-as`.replace(/\n/g, '');
+    const execSync = childProcess.execSync;
+    const strModulePath = `${execSync('npm root -g')}/as-known-as`.replace(/\n/g, '');
 
     settings.setItemSync(app.publicAliasesDirectoryPathKeyName,
       path.join(strModulePath, app.publicAliasesDirectoryName));
   }
-} catch (e) {  
+}
+catch (e) {
   console.log('SETTINGS:', dict.program.setup.messages.storagefailed.red);
   process.exit(0);
 }

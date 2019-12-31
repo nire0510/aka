@@ -1,5 +1,3 @@
-'use strict';
-
 var app = require('../config/app.json');
 var aux = require('./aux');
 var dict = require('../config/dictionary.json');

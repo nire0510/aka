@@ -1,18 +1,18 @@
-'use strict';
+const storage = require('node-persist');
+const app = require('../config/app.json');
+const aux = require('./aux');
+const dict = require('../config/dictionary.json');
+const settings = require('./settings');
 
-var app = require('../config/app.json');
-var dict = require('../config/dictionary.json');
-var aux = require('./aux');
-var settings = require('./settings');
-var storage = require('node-persist');
-var galiases;
+let galiases;
 
 // make sure the aliases directory exists:
 try {
   if (!aux.isDirectory(settings.getItemSync(app.publicAliasesDirectoryPathKeyName))) {
     aux.createDirectory(settings.getItemSync(app.publicAliasesDirectoryPathKeyName));
   }
-} catch (e) {
+}
+catch (e) {
   console.error('GALIASES:', dict.program.setup.messages.directoryfailed.red);
   process.exit(0);
 }
@@ -20,10 +20,11 @@ try {
 try {
   // create & initialize storage:
   galiases = storage.create({
-    dir: settings.getItemSync(app.publicAliasesDirectoryPathKeyName)
+    dir: settings.getItemSync(app.publicAliasesDirectoryPathKeyName),
   });
   galiases.initSync();
-} catch (e) {
+}
+catch (e) {
   console.log(e);
   console.log('GALIASES:', dict.program.setup.messages.storagefailed.red);
   process.exit(0);

@@ -1,15 +1,16 @@
-'use strict';
+const commander = require('commander');
+const actions = require('./actions');
+const dict = require('../config/dictionary.json');
+const pkg = require('../package.json');
 
-var actions = require('./actions');
-var colors = require('colors');
-var commander = require('commander');
-var dict = require('../config/dictionary.json');
-var pkg = require('../package.json');
+require('colors');
 
 /**
  * Initializes program
+ * @param {*} args Command arguments
+ * @returns {undefined}
  */
-commander.run = function (args) {
+commander.run = (args) => {
   commander
     .version(pkg.version)
     .description(pkg.description)
@@ -66,15 +67,17 @@ commander.run = function (args) {
 
   commander
     .command('*')
-    .action(function () {
+    .action(() => {
       // assume execute:
       if (commander.rawArgs.length === 3 && commander.rawArgs[2].indexOf('=') === -1) {
         actions.execute(commander.rawArgs[2], {});
       }
       // assume upsert:
       else {
-        let arrAlias, strAlias, strCommand,
-          objOptions = {};
+        let arrAlias;
+        let strAlias;
+        let strCommand;
+        const objOptions = {};
 
         // extract arguments:
         for (let i = 2; i < commander.rawArgs.length; i++) {
@@ -84,14 +87,14 @@ commander.run = function (args) {
             strCommand = arrAlias[1];
           }
           // has description:
-          else if (commander.rawArgs[i] === '-d' || commander.rawArgs[i] === '--description' &&
+          else if ((commander.rawArgs[i] === '-d' || commander.rawArgs[i] === '--description') &&
             i + 1 < commander.rawArgs.length) {
             objOptions.description = commander.rawArgs[i + 1];
           }
         }
 
         if (strAlias && strCommand) {
-          actions.upsert(strAlias, strCommand, objOptions); 
+          actions.upsert(strAlias, strCommand, objOptions);
         }
         else {
           console.error(dict.program.commands.common.messages.commandnotfound.red);
