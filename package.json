@@ -30,9 +30,9 @@
   "license": "ISC",
   "dependencies": {
     "colors": "^1.4.0",
-    "commander": "2.9.0",
-    "inquirer": "^7.0.1",
+    "commander": "7.2.0",
+    "inquirer": "^8.0.0",
     "node-persist": "0.0.12",
-    "string-argv": "0.0.2"
+    "string-argv": "0.3.1"
   }
 }

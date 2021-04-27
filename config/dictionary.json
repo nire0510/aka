@@ -4,7 +4,7 @@
       "messages": {
         "storagefailed": "Could not setup storage (did you install package using sudo? have invalid file in your aliases directory?)",
         "storagepath": "Current alias directory:",
-        "directoryfailed": "Failed to create storage directory (did you install package using sudo?)"
+        "directoryfailed": "Failed to create storage directory (did you install package using sudo?). Please try to re-run."
       }
     },
     "commands": {

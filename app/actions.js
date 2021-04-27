@@ -7,7 +7,7 @@ var Alias = require('./alias');
 var aliases = require('./aliases');
 var galiases = require('./galiases');
 var settings = require('./settings');
-var sargs = require('string-argv');
+var { parseArgsStringToArgv } = require('string-argv');
 
 var actions = {
   /**
@@ -112,7 +112,7 @@ var actions = {
    * Changes private aliases directory
    * @param {string} strTargetPath Target path
    */
-  chdir(strTargetPath) {
+   chdir(strTargetPath) {
     if (aux.moveDirectoryContent(settings.getItemSync(app.privateAliasesDirectoryPathKeyName),
         strTargetPath)) {
       settings.setItemSync(app.privateAliasesDirectoryPathKeyName, strTargetPath);
@@ -393,7 +393,7 @@ var actions = {
         strFullCommand.substr(0, strFullCommand.indexOf(' ')) :
         strFullCommand;
       const arrOpts = strFullCommand.trim().indexOf(' ') > 0 ?
-        sargs(strFullCommand.substr(strFullCommand.indexOf(' ') + 1)) :
+        parseArgsStringToArgv(strFullCommand.substr(strFullCommand.indexOf(' ') + 1)) :
         [];
 
       // display command:
