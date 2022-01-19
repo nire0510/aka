@@ -64,7 +64,7 @@ program
   .action(actions.list);
 
 program
-  .command('move <from> <to>')
+  .command('move <from> [to]')
   .alias('mv')
   .description(dictionary.program.commands.move.description)
   .option('-d, --description <description>', dictionary.program.commands.move.options.description)
