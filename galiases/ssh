@@ -1,6 +1,0 @@
-{
-  "alias":"ssh",
-  "command":"ssh {{Username?|input}}@{{Host?|input}}",
-  "description":"establish an SSH connection",
-  "timestamp":"2016-06-28T08:49:10.306Z"
-}

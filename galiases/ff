@@ -1,6 +1,0 @@
-{
-  "alias":"ff",
-  "command":"find {{Directory path?|input}} -name {{File name (wildcard is allowed)?|input}}",
-  "description":"find all files in a directory by name",
-  "timestamp":"2016-06-28T08:49:10.306Z"
-}

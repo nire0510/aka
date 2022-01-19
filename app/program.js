@@ -1,113 +1,83 @@
-const commander = require('commander');
+const { Command, Argument } = require('commander');
 const actions = require('./actions');
-const dict = require('../config/dictionary.json');
+const dictionary = require('../config/dictionary.json');
 const pkg = require('../package.json');
+
+const program = new Command();
 
 require('colors');
 
-/**
- * Initializes program
- * @param {*} args Command arguments
- * @returns {undefined}
- */
-commander.run = (args) => {
-  commander
-    .version(pkg.version)
-    .description(pkg.description)
-    .option('-C, --chdir <path>', dict.program.commands.chdir.description)
-    .option('-w, --website', dict.program.commands.website.description)
-    .on('website', actions.website)
-    .on('chdir', actions.chdir)
-    .on('--help', actions.help);
-
-  commander
-    .command('<alias>=<command>')
-    .description(dict.program.commands.upsert.description)
-    .option('-d, --description <description>', dict.program.commands.upsert.options.description)
-    .action(actions.upsert);
-
-  commander
-    .command('move <from> [to]')
-    .alias('mv')
-    .description(dict.program.commands.move.description)
-    .option('-d, --description <description>', dict.program.commands.move.options.description)
-    .action(actions.move);
-
-  commander
-    .command('copy <from> <to>')
-    .alias('cp')
-    .option('-g, --global', dict.program.commands.copy.options.global)
-    .description(dict.program.commands.copy.description)
-    .action(actions.copy);
-
-  commander
-    .command('list [filter]')
-    .alias('ls')
-    .description(dict.program.commands.list.description)
-    .option('-c, --command', dict.program.commands.list.options.command)
-    .option('-g, --global', dict.program.commands.list.options.global)
-    .action(actions.list);
-
-  commander
-    .command('remove [alias...]')
-    .alias('rm')
-    .option('-r, --recursive', dict.program.commands.remove.options.recursive)
-    .option('-f, --force', dict.program.commands.remove.options.force)
-    .description(dict.program.commands.remove.description)
-    .action(actions.remove);
-
-  commander
-    .command('execute <alias>')
-    .alias('ex')
-    .option('-d, --dry', dict.program.commands.execute.options.dry)
-    .option('-g, --global', dict.program.commands.execute.options.global)
-    .option('-p, --params <params...>', dict.program.commands.execute.options.params)
-    .description(dict.program.commands.execute.description)
-    .action(actions.execute);
-
-  commander
-    .command('*')
-    .action(() => {
-      // assume execute:
-      if (commander.rawArgs.length === 3 && commander.rawArgs[2].indexOf('=') === -1) {
-        actions.execute(commander.rawArgs[2], {});
+program
+  .name('aka')
+  .version(pkg.version)
+  .description(pkg.description)
+  .option('-C, --chdir <path>', dictionary.program.commands.chdir.description)
+  .option('-m, --migrate', dictionary.program.commands.migrate.description)
+  .option('-w, --website', dictionary.program.commands.website.description)
+  .action(async (options) => {
+    if (options.chdir) {
+      actions.chdir(options.chdir);
+    }
+    else if (options.migrate) {
+      actions.migrate();
+    }
+    else if (options.website) {
+      actions.website();
+    }
+    else {
+      if (program.args.length > 0) {
+        actions.execute(program.args.join(' '), options);
       }
-      // assume upsert:
       else {
-        let arrAlias;
-        let strAlias;
-        let strCommand;
-        const objOptions = {};
-
-        // extract arguments:
-        for (let i = 2; i < commander.rawArgs.length; i++) {
-          if (commander.rawArgs[i].indexOf('=') !== -1) {
-            arrAlias = commander.rawArgs[i].split('=');
-            strAlias = arrAlias[0];
-            strCommand = arrAlias[1];
-          }
-          // has description:
-          else if ((commander.rawArgs[i] === '-d' || commander.rawArgs[i] === '--description') &&
-            i + 1 < commander.rawArgs.length) {
-            objOptions.description = commander.rawArgs[i + 1];
-          }
-        }
-
-        if (strAlias && strCommand) {
-          actions.upsert(strAlias, strCommand, objOptions);
-        }
-        else {
-          console.error(dict.program.commands.common.messages.commandnotfound.red);
-        }
+        await actions.help();
+        program.help();
       }
-    });
+    }
+  });
 
-  // parse args:
-  commander.parse(args);
-  // display help if no args passed:
-  if (!commander.args.length && !commander.chdir) {
-    commander.help();
+program
+  .command('add <alias> <command>')
+  .description(dictionary.program.commands.upsert.description)
+  .option('-d, --description <description>', dictionary.program.commands.upsert.options.description)
+  .action((alias, command, options) => actions.upsert(alias, command, options, false));
+
+program
+  .command('copy <from> <to>')
+  .alias('cp')
+  .description(dictionary.program.commands.copy.description)
+  .option('-d, --description <description>', dictionary.program.commands.copy.options.description)
+  .action(actions.copy);
+
+program
+  .command('execute <alias>')
+  .alias('ex')
+  .option('-d, --dry', dictionary.program.commands.execute.options.dry)
+  .option('-p, --params <params...>', dictionary.program.commands.execute.options.params)
+  .description(dictionary.program.commands.execute.description)
+  .action(actions.execute);
+
+program
+  .command('list [filter]')
+  .alias('ls')
+  .description(dictionary.program.commands.list.description)
+  .option('-c, --command', dictionary.program.commands.list.options.command)
+  .action(actions.list);
+
+program
+  .command('move <from> <to>')
+  .alias('mv')
+  .description(dictionary.program.commands.move.description)
+  .option('-d, --description <description>', dictionary.program.commands.move.options.description)
+  .action(actions.move);
+
+program
+  .command('remove <alias...>')
+  .alias('rm')
+  .description(dictionary.program.commands.remove.description)
+  .action(actions.remove);
+
+module.exports = {
+  async run(args) {
+    program.parse(args);
   }
 };
-
-module.exports = commander;

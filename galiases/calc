@@ -1,6 +1,0 @@
-{
-  "alias":"calc",
-  "command":"bc",
-  "description":"command line calculator",
-  "timestamp":"2016-06-28T08:49:10.306Z"
-}

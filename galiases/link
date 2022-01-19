@@ -1,6 +1,0 @@
-{
-  "alias":"link",
-  "command":"ln {{Is it a soft link?|confirm|y}} {{Source file path?|input}} {{Link path?|input}}",
-  "description":"creates links to files and folders",
-  "timestamp":"2016-06-28T08:49:10.306Z"
-}

@@ -12,7 +12,7 @@
         "messages": {
           "idnotfound": "Could not found alias %s",
           "commandnotfound": "No command matches your input",
-          "global": "search in the global aliases repository"
+          "noSuchAlias": "There is no action with alias: %s"
         }
       },
       "version": {
@@ -25,19 +25,25 @@
         }
       },
       "list": {
-        "description": "show all aliases with optional filter",
+        "description": "show all aliases",
         "options": {
           "command": "display commands as well"
         },
         "messages": {
           "listempty": "Aliases list is empty",
           "total": "(%s aliases found)",
-          "totalone": "(%s alias found)",
-          "showglobal": "No alias found. Would you like to search in global aliases repository?"
+          "totalone": "(%s alias found)"
+        }
+      },
+      "migrate": {
+        "description": "migrate aliases from pre 1.0.0 versions of as-known-as",
+        "messages": {
+          "done": "Aliases migrated successfully",
+          "error": "Aliases failed to migrate"
         }
       },
       "chdir": {
-        "description": "change the working directory",
+        "description": "change the aliases directory",
         "messages": {
           "changed": "Aliases directory changed to"
         }
@@ -55,9 +61,9 @@
         }
       },
       "copy": {
-        "description": "copy (clone) an existing alias",
+        "description": "copy an existing alias",
         "options": {
-          "global": "source alias is global"
+          "description": "short description"
         },
         "messages": {
           "copied": "Alias copied successfully: %s"
@@ -89,17 +95,15 @@
         }
       },
       "execute": {
-        "description": "execute an alias or display aliases which contain the input",
+        "description": "execute an alias",
         "options": {
-          "dry": "do not execute the command",
-          "params": "temporarily append parameters to the command",
-          "global": "command in global aliases repository"
+          "dry": "do not execute the command, only show the command",
+          "params": "temporarily append parameters to the command"
         },
         "messages": {
           "noalias": "Alias not found:",
           "aliaseslike": "Alias not found. Did you refer to one of the following aliases?",
           "quit": "None of the above, quit",
-          "global": "Show global aliases",
           "bindingfailed": "Failed to parse command binding"
         }
       }

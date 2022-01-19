@@ -1,6 +1,0 @@
-{
-  "alias":"b64",
-  "command":"echo {{String to encode/decode?|input}} | base64 {{Decode?|confirm|-d}}",
-  "description":"encode or decode a string",
-  "timestamp":"2016-06-28T08:49:10.306Z"
-}

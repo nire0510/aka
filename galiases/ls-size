@@ -1,6 +1,0 @@
-{
-  "alias":"ls-size",
-  "command":"ls -lSh",
-  "description":"long listing directory contents sorted by file size",
-  "timestamp":"2016-06-28T08:49:10.306Z"
-}

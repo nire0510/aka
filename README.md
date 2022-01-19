@@ -2,12 +2,17 @@
 
 ###### Alias Bash Command on Steroids
 
-A Bash `alias` is essentially nothing more than a keyboard shortcut, an abbreviation, 
-a means of avoiding typing a long command sequence.  
+A Bash `alias` is essentially nothing more than a keyboard shortcut, an abbreviation,
+a means of avoiding typing a long command sequence.
 It's because of these reasons that **AKA** provides a better alternative to the good ol' `alias` command:
 - Aliases are stored as files on your file system and hence can be easily shared and synchronized between your computers
 - AKA is cross-platform, which means it can be be used on your Linux, MacOS or Windows OS based machines
 - It comes with some advance & handy features, such as: search, dynamic parameters and more
+
+### Migrating to V1
+The latest version has gone through some major changes, and hence is not compatible with aliases which were created with older versions of AKA.
+If you choose to upgrade to the new version, please make sure you backup your aliases folder and then run the following command:
+`aka --migrate`
 
 ### Installation
 `npm install -g as-known-as`
@@ -16,75 +21,56 @@ It's because of these reasons that **AKA** provides a better alternative to the 
 `Usage: aka [options] [command]`
 
 ### Commands
-* `<alias>=<command> [options]`         add a new alias or update existing one  
-* `move|mv [options] <from> <to>`      rename an existing alias and/or update its description  
-* `copy|cp [options] <from> <to>`      copy (clone) an existing alias  
-* `remove|rm [options] [alias...]`  remove a one or more aliases  
-* `list|ls [options] [filter]`   show all aliases with optional filter  
-* `execute|ex <alias>`              execute an alias
+* `add [options] <alias> <command>` - add a new alias or update existing one
+* `copy|cp [options] <from> <to>`   - copy an existing alias
+* `execute|ex [options] <alias>`    - execute an alias
+* `list|ls [options] [filter]`      - show all aliases
+* `move|mv [options] <from> <to>`   - rename an alias and/or update its description
+* `remove|rm <alias...>`            - remove a one or more aliases
 
 ### Options
-`-h, --help`          output usage information  
-`-V, --version`       output the version number  
-`-C, --chdir <path>`  change the working directory  
-`-w, --website`       open AKA website  
+`-C, --chdir <path>`  change the aliases directory
+`-h, --help`          output usage information
+`-m, --migrate`       migrate aliases from pre 1.0.0 versions of as-known-as
+`-V, --version`       output the version number
+`-w, --website`       open AKA website
 
-### Cues
+### Index
 * `<...>` - mandatory value
 * `[...]` - optional value
 
 ### Examples
-* `aka my-ip="dig +short myip.opendns.com @resolver1.opendns.com" -d "get my public ip address"` - adds a new **my-ip** alias
-  with description. Description & command should be surrounded with quotes
-* `aka ls ip` - searches for all aliases which contains **ip** in either alias or description
-* `aka ex my-ip` - execute **my-ip** alias (you can also omit the `ex` if no options specified)
-* `aka rm -rf` - removes all aliases
-* `aka --chdir /Users/nir/Dropbox/aka` - changes **AKA** aliases directory
+* `aka add my-ip "dig +short myip.opendns.com @resolver1.opendns.com" -d "get my public ip address"` - adds a new **my-ip** alias with description. Description & command should be surrounded with quotes.
+* `aka ls ip` - searches for all aliases which contains **ip** in either alias or description.
+* `aka ex my-ip` - execute **my-ip** alias (you can also omit the `ex` if no options specified).
+* `aka rm my-ip` - removes all aliases.
+* `aka --chdir /Users/nir/Dropbox/aka` - changes **AKA** aliases directory.
 
 ### Advanced Usage
-1. **Dynamic command parameters** - Use command option -p to leave out parameters which you want to add dynamically, for example:  
-`aka ls="ls -la" -d "display folder content as a list" ` and then use as follows:  
+1. **Dynamic command parameters** - Use command option -p to leave out parameters which you want to add dynamically, for example:
+`aka ls="ls -la" -d "display folder content as a list" ` and then use as follows:
     `aka ex ls -p "some-path"`
-2. **Dynamic command parameters binding** - Use command option -b to flag a command with bind-able parameters.  
-Parameters binding makes it even easier to execute aliases, by providing help and even set of valid options, for example:  
+2. **Dynamic command parameters binding** - Use command option -b to flag a command with bind-able parameters.
+Parameters binding makes it even easier to execute aliases, by providing help and even set of valid options, for example:
 `aka scale-image="convert {{Source image path?|input}} -resize {{Scale rate (in percents)?|input}} {{Scaled image path?|input}}"
     -d "scale an image proportionally"`
-     and then the use as follows:  
-    `aka ex scale-image`  
+     and then the use as follows:
+    `aka ex scale-image`
 
-  Dynamic command parameters binding format:  
-    - `{{description|type[|options]}}`  
-    - **description** - short parameter description  
+  Dynamic command parameters binding format:
+    - `{{description|type[|options]}}`
+    - **description** - short parameter description
     - **type** - can be either `input` for free text, `list` for predefined list of valid options or `confirm` for
-      specific value (see **options** for more info)  
-    - **options**  
-        - case `list` - semicolon separated list of strings, required only if type is `list`  
-        - case `confirm` - a value which will be appended to the command in case of confirmation  
+      specific value (see **options** for more info)
+    - **options**
+        - case `list` - semicolon separated list of strings, required only if type is `list`
+        - case `confirm` - a value which will be appended to the command in case of confirmation
         - case `input` - default value
-        
-### Global Aliases
-In addition to the aliases you yourself, there are global aliases which come built-in with this tool.  
-To see those aliases or to execute them, add `-g` to the `ls` or `ex` command respectively, for example:  
-`aka ls -g` or `aka ex zip`.
-
-#### Adding Global Aliases
-If you have an alias you find very useful, you can suggest adding it to the global aliases repository.  
-To do this, clone the project, then add your alias to the **galiases** directory according to the example below:
-```json
-{
-  "alias": "ll",
-  "command": "ls -la",
-  "description": "long listing",
-  "timestamp": "2016-06-28T08:49:10.306Z",
-  "credit": "you.email@domain.com"
-}
-```
 
 ### Tips & Tricks
 * Call any of the commands with `-h` parameter to see its help
 * Always use absolute paths (avoid shortcuts symbols such as ~, .. etc)
-* You do not have to remember command's exact alias. If no command with the exact alias was found, similar options
-    will be displayed
+* You do not have to remember command's exact alias. If no command with the exact alias was found, similar options will be displayed
 * Change **AKA** aliases directory to Dropbox, Google Drive or any other online storage service, to share your aliases
     with all your workstations
 * If you get **EACCES: permission denied** error on first run, either run as sudo (only once),

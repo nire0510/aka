@@ -1,6 +1,0 @@
-{
-  "alias":"ssh-keygen",
-  "command":"ssh-keygen -f ~/.ssh/{{File name?|input}}",
-  "description":"generate ssh keys user for authentication, password-less logins, and other things",
-  "timestamp":"2016-06-28T08:49:10.306Z"
-}

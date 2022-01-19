@@ -1,6 +1,0 @@
-{
-  "alias":"telnet",
-  "command":"telnet {{IP address?|input}} {{Port number?|input}}",
-  "description":"connect to a specified port of a host",
-  "timestamp":"2016-06-28T08:49:10.306Z"
-}

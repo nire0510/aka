@@ -1,6 +1,0 @@
-{
-  "alias":"uptime",
-  "command":"uptime",
-  "description":"how long the system has been running and other information",
-  "timestamp":"2016-06-28T08:49:10.306Z"
-}

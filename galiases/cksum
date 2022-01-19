@@ -1,6 +1,0 @@
-{
-  "alias":"cksum",
-  "command":"cksum {{File path?|input}}",
-  "description":"calculates CRC checksums and byte counts of a file",
-  "timestamp":"2016-06-28T08:49:10.306Z"
-}

@@ -1,353 +1,299 @@
-var app = require('../config/app.json');
-var aux = require('./aux');
-var dict = require('../config/dictionary.json');
-var inquirer = require('inquirer');
-var pkg = require('../package.json');
-var Alias = require('./alias');
-var aliases = require('./aliases');
-var galiases = require('./galiases');
-var settings = require('./settings');
-var { parseArgsStringToArgv } = require('string-argv');
+const colors = require('colors');
+const getv = require('getv');
+const execSync = require('child_process').execSync;
+const inquirer = require('inquirer');
+const { parseArgsStringToArgv } = require('string-argv');
+const Alias = require('./models/alias.js');
+const AliasesStorage = require('./stores/aliases.js');
+const app = require('../config/app.json');
+const dictionary = require('../config/dictionary.json');
+const fs = require('./utils/fs');
+const pkg = require('../package.json');
+const SettingsStorage = require('./stores/settings.js');
+const shell = require('./utils/shell');
 
-var actions = {
+const actions = {
   /**
    * Customized help screen
    */
-  help() {
-    var execSync = require('child_process').execSync,
-      strLatestVersion;
+  async help() {
+    const latestVersion = execSync('npm show as-known-as version');
+    const settingsStorage = await SettingsStorage.getInstance();
+    const aliasesDirectoryPath = await settingsStorage.getItem(app.aliasesDirectoryPathKeyName);
 
     // show aliases directory path:
-    console.log(dict.program.setup.messages.storagepath,
-      settings.getItemSync(app.privateAliasesDirectoryPathKeyName).white.bold);
-
+    console.log(dictionary.program.setup.messages.storagepath, colors.white.bold(aliasesDirectoryPath));
     // check latest version:
-    process.stdout.write(dict.program.commands.version.messages.checking);
-    strLatestVersion = execSync('npm show as-known-as version');
-    // new version available:
-    if (`${strLatestVersion}`.indexOf(pkg.version) !== 0) {
-      console.log(dict.program.commands.version.messages.newversion.green,
-        `${strLatestVersion}`.replace( /[^0-9\.]/ , '').bold.green);
-      console.log(dict.program.commands.version.messages.upgrade,
-        dict.program.commands.version.messages.command.bold);
+    console.log(dictionary.program.commands.version.messages.checking);
+    if (`${latestVersion}`.indexOf(pkg.version) !== 0) {
+      console.log(colors.green(dictionary.program.commands.version.messages.newversion),
+        colors.bold.green(`${latestVersion}`.replace( /[^0-9\.]/ , '')));
+      console.log(dictionary.program.commands.version.messages.upgrade,
+        colors.bold(dictionary.program.commands.version.messages.command));
     }
-    // up-to-date:
     else {
-      console.log(dict.program.commands.version.messages.uptodate.green, pkg.version.white.bold);
+      console.log(colors.green(dictionary.program.commands.version.messages.uptodate), colors.white.bold(pkg.version));
     }
+    console.log();
   },
 
   /**
    * Open AKA website (on npm.js
    */
-  website() {
-    aux.shell('open "https://www.npmjs.com/package/as-known-as"', null, [])
+   website() {
+    shell.execute('open "https://www.npmjs.com/package/as-known-as"', 'open', ['https://www.npmjs.com/package/as-known-as']);
+    process.exit();
   },
 
   /**
    * Shows all aliases with optional filter
    */
-  list(strFilter, objOptions) {
-    let intCounter = 0,
-      repo = objOptions.global ? galiases : aliases;
+  async list(filter, options) {
+    const aliasesStorage = await AliasesStorage.getInstance();
 
     // no aliases:
-    if (repo.length() === 0) {
-      console.warn(dict.program.commands.list.messages.listempty.green);
-      return;
+    if (aliasesStorage.length() === 0) {
+      console.log(colors.green(dictionary.program.commands.list.messages.listempty));
     }
+    else {
+      let counter = 0;
 
-    // print aliases:
-    repo.forEach(function(key, value) {
-      // display command if not filter specified or filter matches command alias:
-      if (!strFilter || key.indexOf(strFilter) !== -1 ||
-        (value.description && value.description.indexOf(strFilter) !== -1)) {
-        intCounter++;
-        // show alias & command:
-        try {
-          console.log('*', key.bold.magenta, value.description || '');
-          if (!objOptions.command) {
-            console.log(' ', value.command.gray);
+      // print aliases:
+      await aliasesStorage.forEach((datum) => {
+        // display command if not filter specified or filter matches command alias:
+        if (!filter || datum.key.indexOf(filter) !== -1 ||
+          (datum.value.description && datum.value.description.indexOf(filter) !== -1)) {
+          counter++;
+          // show alias & command:
+          try {
+            console.log('*', colors.bold.magenta(datum.key), datum.value.description);
+            if (options.command) {
+              console.log(' ', colors.gray(datum.value.command));
+            }
+          }
+          catch (err) {
+            console.log('*', colors.bold.red(datum.key), 'alias is invalid');
           }
         }
-        catch(err) {
-          console.log('*', key.bold.red, 'alias is invalid');
-        }
-      }
-    });
-
-    // no aliases after filter - suggest searching global aliases:
-    if (intCounter === 0 && !objOptions.global) {
-      inquirer.prompt([{
-        type: 'confirm',
-        name: 'global',
-        message: dict.program.commands.list.messages.showglobal,
-        default: 'y'
-      }]).then(function (answers) {
-        // confirmed:
-        if (answers.global) {
-          objOptions.global = true;
-          actions.list(strFilter, objOptions);
-          return;
-        }
-        else {
-          // print total:
-          console.log();
-          console.log(intCounter === 1 ?
-            dict.program.commands.list.messages.totalone :
-            dict.program.commands.list.messages.total, intCounter.toString().bold);
-        }
       });
-    }
-    // print total:
-    else {
+
       console.log();
-      console.log(intCounter === 1 ?
-        dict.program.commands.list.messages.totalone :
-        dict.program.commands.list.messages.total, intCounter.toString().bold);
+      console.log(counter === 1 ?
+        dictionary.program.commands.list.messages.totalone :
+        dictionary.program.commands.list.messages.total, colors.bold(counter.toString()));
     }
   },
 
   /**
    * Changes private aliases directory
-   * @param {string} strTargetPath Target path
+   * @param {string} targetDir Target directry path
    */
-   chdir(strTargetPath) {
-    if (aux.moveDirectoryContent(settings.getItemSync(app.privateAliasesDirectoryPathKeyName),
-        strTargetPath)) {
-      settings.setItemSync(app.privateAliasesDirectoryPathKeyName, strTargetPath);
-      console.log(dict.program.commands.chdir.messages.changed.green, strTargetPath.bold.white);
+   async chdir(targetDir) {
+    const settingsStorage = await SettingsStorage.getInstance();
+    const currentDir = await settingsStorage.getItem(app.aliasesDirectoryPathKeyName);
+
+    if (fs.moveDirectoryContent(currentDir, targetDir)) {
+      await settingsStorage.setItem(app.aliasesDirectoryPathKeyName, targetDir);
+      console.log(colors.green(dictionary.program.commands.chdir.messages.changed), colors.bold.white(targetDir));
     }
   },
 
   /**
    * Rename alias and optionally update its description
-   * @param {string} strAlias Current alias
-   * @param {string} strNewAlias New alias
-   * @param {object} objOptions Command options
+   * @param {string} alias Current alias
+   * @param {string} newAlias New alias
+   * @param {object} options Command options
    */
-  move(strAlias, strNewAlias, objOptions) {
-    let objAlias = actions.getAlias(strAlias, objOptions, true);
+   async migrate() {
+    try {
+      const aliasesStorage = await AliasesStorage.getInstance();
+      const settingsStorage = await SettingsStorage.getInstance();
+      const aliasesDirectoryPath = await settingsStorage.getItem(app.aliasesDirectoryPathKeyName);
 
-    // alias not found:
-    if (!objAlias) {
-      return;
+      if (aliasesDirectoryPath) {
+        const files = await fs.readDirectory(aliasesDirectoryPath);
+
+        files.forEach(async (file) => {
+          try {
+            const content = await fs.readFile(`${aliasesDirectoryPath}/${file}`);
+            const json = JSON.parse(content);
+
+            if (json.alias) { // old format
+              const { alias, ...value } = json;
+
+              await aliasesStorage.setItem(alias, value);
+              await fs.deleteFile(`${aliasesDirectoryPath}/${file}`);
+            }
+          }
+          catch (error) {
+            fs.deleteFile(`${aliasesDirectoryPath}/${file}`);
+          }
+        });
+
+        console.log(colors.green(dictionary.program.commands.migrate.messages.done));
+      }
     }
-
-    // remove old command:
-    if (strNewAlias) {
-      actions.remove([strAlias], {}, true);
+    catch (error) {
+      console.log(colors.red(dictionary.program.commands.migrate.messages.error));
     }
+  },
 
-    // add new command:
-    actions.upsert(strNewAlias ? strNewAlias : strAlias,
-      objAlias.command, {
-        description: objOptions.description && typeof objOptions.description === 'string' ?
-          objOptions.description :
-          objAlias.description
-      }, true);
+  /**
+   * Rename alias and optionally update its description
+   * @param {string} curAlias Current alias
+   * @param {string} newAlias New alias
+   * @param {object} options Command options
+   */
+  async move(curAlias, newAlias, options) {
+    const aliasObject = await actions.getAlias(curAlias, false);
 
-    // command feedback:
-    console.log(dict.program.commands.move.messages.moved.green, strNewAlias ?
-      strNewAlias.bold.white :
-      strAlias.bold.white
-    );
+    if (aliasObject) {
+      // remove old command:
+      if (newAlias) {
+        await actions.remove([curAlias], true);
+      }
+
+      await actions.upsert(newAlias || curAlias, aliasObject.command, { description: options.description || aliasObject.description }, true);
+      console.log(colors.green(dictionary.program.commands.move.messages.moved), colors.bold.white(newAlias || curAlias));
+    }
   },
 
   /**
    * Copies an alias
-   * @param {string} strAlias Current alias
-   * @param {string} strNewAlias New alias
-   * @param {object} objOptions Command options
+   * @param {string} curAlias Current alias
+   * @param {string} newAlias New alias
+   * @param {object} options Command options
    */
-  copy(strAlias, strNewAlias, objOptions) {
-    let objAlias = actions.getAlias(strAlias, objOptions, true);
+  async copy(curAlias, newAlias, options) {
+    const aliasObject = await actions.getAlias(curAlias, false);
 
-    // alias not found:
-    if (!objAlias) {
-      return;
+    if (aliasObject) {
+      await actions.upsert(newAlias, aliasObject.command, { description: options.description || aliasObject.description }, true);
+      console.log(colors.green(dictionary.program.commands.copy.messages.copied), colors.bold.white(newAlias));
     }
-
-    // add new command:
-    actions.upsert(strNewAlias,
-      objAlias.command, {
-        description: objAlias.description
-      }, true);
-
-    // command feedback:
-    console.log(dict.program.commands.copy.messages.copied.green, strNewAlias.bold.white);
   },
 
   /**
    * Adds a new alias or updates an existing one
    * @param {string[]} arrCommand Command as an array of words
-   * @param {object} objOptions Command options
-   * @param {boolean} blnMuted Indicates whether not to show feedback
+   * @param {object} options Command options
+   * @param {boolean} muted Indicates whether not to show feedback
    */
-  upsert(strAlias, strCommand, objOptions, blnMuted) {
-    let objAlias = actions.getAlias(strAlias, objOptions, false),
-      objNewAlias = new Alias(strAlias,
-        strCommand,
-        objOptions.description && typeof objOptions.description === 'string' ? objOptions.description : null);
+  async upsert(alias, command, options, muted=false) {
+    const curAliasObject = await actions.getAlias(alias);
+    const newAliasObject = new Alias(alias, command, options.description || getv(curAliasObject, 'description'));
+    const aliasesStorage = await AliasesStorage.getInstance();
 
-    // upsert:
-    aliases.setItem(strAlias, objNewAlias.asJSON());
-    // feedback:
-    if (!blnMuted) {
-      console.log(!objAlias ?
-          dict.program.commands.upsert.messages.added.green :
-          dict.program.commands.upsert.messages.updated.green,
-        objNewAlias.alias.bold.white);
+    await aliasesStorage.setItem(alias, newAliasObject.valueOf());
+    if (!muted) {
+      console.log(
+          colors.green(!curAliasObject ?
+            dictionary.program.commands.upsert.messages.added :
+            dictionary.program.commands.upsert.messages.updated),
+        colors.bold.white(newAliasObject.alias));
     }
   },
 
   /**
    * Returns an alias and optionally displays an error if it doesn't
-   * @param {string} strAlias Alias
-   * @param {object} objOptions Command options
-   * @param {boolean} blnShowError Indicates whether to show and error if alias doesn't exist
+   * @param {string} alias Alias
+   * @param {boolean} muted Indicates whether to show and error if alias doesn't exist
    */
-  getAlias(strAlias, objOptions, blnShowError) {
-    let objAlias = objOptions && objOptions.global ? galiases.getItemSync(strAlias) : aliases.getItemSync(strAlias);
+  async getAlias(alias, muted=true) {
+    const aliasesStorage = await AliasesStorage.getInstance();
+    const aliasObject = await aliasesStorage.getItem(alias);
 
     // feedback:
-    if (!objAlias && blnShowError) {
-      console.error('There is no action with alias:'.red, strAlias.bold.red);
+    if (!aliasObject && !muted) {
+      console.log(colors.red(dictionary.program.commands.common.messages.noSuchAlias), colors.bold.red(alias));
     }
 
-    return objAlias;
+    return aliasObject;
   },
 
   /**
    * Removes an alias
-   * @param {string[]} arrAliases Array of aliases
-   * @param {object} objOptions Command options
-   * @param {boolean} blnMuted Indicates whether not to show feedback
+   * @param {string[]} aliases Array of aliases
+   * @param {boolean} muted Indicates whether not to show feedback
    */
-  remove (arrAliases, objOptions, blnMuted) {
-    // remove all aliases flag:
-    if (objOptions.recursive) {
-      // skip confirmation flag:
-      if (objOptions.force) {
-        aliases.clearSync();
-        if (!blnMuted) {
-          console.log(dict.program.commands.remove.messages.allremoved.green);
-        }
-      }
-      else {
-        inquirer.prompt([{
-          type: 'confirm',
-          name: 'remove',
-          message: dict.program.commands.remove.messages.removeconfirm,
-          default: 'n'
-        }]).then(function (answers) {
-          // confirmed:
-          if (answers.remove) {
-            aliases.clearSync();
-            console.log(dict.program.commands.remove.messages.allremoved.green);
-          }
-        });
-      }
+  async remove(aliases, muted=false) {
+    if (aliases.length === 0) {
+      console.log(colors.red(dictionary.program.commands.remove.messages.aliasmissing));
     }
     else {
-      // alias is required:
-      if (arrAliases.length === 0) {
-        console.error(dict.program.commands.remove.messages.aliasmissing.red);
-        return;
-      }
-
-      // remove:
-      arrAliases.forEach((strAlias) => {
-        // remove alias:
-        aliases.removeItemSync(strAlias);
-      });
+      const aliasesStorage = await AliasesStorage.getInstance();
+      const removedAliases = await Promise.all(aliases.map((alias) => aliasesStorage.removeItem(alias)));
 
       // feedback:
-      if (!blnMuted) {
-        arrAliases.length === 1 ?
-          console.log(dict.program.commands.remove.messages.removed.green, `${arrAliases[0]}`.bold.white) :
-          console.log(dict.program.commands.remove.messages.someremoved.green);
+      if (!(muted === true)) {
+        removedAliases.length === 1 ?
+          console.log(colors.green(dictionary.program.commands.remove.messages.removed), colors.bold.white(`${aliases[0]}`)) :
+          console.log(colors.green(dictionary.program.commands.remove.messages.someremoved));
       }
     }
   },
 
   /**
    * Executes an alias
-   * @param {string} strAlias Alias
-   * @param {object} objOptions Command options
+   * @param {string} alias Alias
+   * @param {object} options Command options
    */
-  execute(strAlias, objOptions) {
-    let objAlias = actions.getAlias(strAlias, objOptions, false),
-      repo = objOptions.global ? galiases : aliases;
+  async execute(alias, options) {
+    const aliasObject = await actions.getAlias(alias);
+    const aliasesStorage = await AliasesStorage.getInstance();
 
     // alias found:
-    if (objAlias) {
+    if (aliasObject) {
       // check if it has bindings:
-      if (/[{]{2}.+[}]{2}/.test(objAlias.command)) {
-        _parseBinding(objAlias).then(
-          (objParsedAlias) => {
-            _exec(objParsedAlias, objOptions);
-          },
-          () => {
-            console.error(dict.program.commands.execute.messages.bindingfailed);
-          }
-        );
+      if (/[{]{2}.+[}]{2}/.test(aliasObject.command)) {
+        _parseBinding(aliasObject)
+          .then((parsedAlias) => {
+              _exec(parsedAlias, options);
+            },
+            () => {
+              console.log(dictionary.program.commands.execute.messages.bindingfailed);
+            });
       }
       else {
-        _exec(objAlias, objOptions);
+        _exec(aliasObject, options);
       }
     }
     // alias not found, display similar aliases
     else {
-      let arrAliases = [];
+      const aliases = [];
 
       // print similar aliases:
-      repo.forEach(function (key, value) {
+      await aliasesStorage.forEach((datum) => {
         // display command if not filter specified or filter matches command alias:
-        if (key.indexOf(strAlias) !== -1 ||
-          (value.description && value.description.indexOf(strAlias) !== -1)) {
-          arrAliases.push({
-            name: `${key.bold}${value.description ? ' ' + value.description.gray : ''}`,
-            value: value
+        if (datum.key.indexOf(alias) !== -1 ||
+          (datum.value.description && datum.value.description.indexOf(alias) !== -1)) {
+          aliases.push({
+            name: `${datum.key.bold}${datum.value.description ? ' ' + colors.gray(datum.value.description) : ''}`,
+            value: datum.key,
           });
         }
       });
-      // some aliases found - add quit option:
-      if (arrAliases.length > 0) {
-        // separator:
-        arrAliases.push(new inquirer.Separator());
-        if (!objOptions.global) {
-          // search galiases:
-          arrAliases.push({
-            name: dict.program.commands.common.messages.global,
-            value: 'global'
-          });
-        }
-        // quit
-        arrAliases.push({
-          name: dict.program.commands.execute.messages.quit,
-          value: 'quit'
-        });
-      }
-      // no alias found, go automatically to galiases:
-      else if (!objOptions.global) {
-        objOptions.global = true;
-        actions.execute(strAlias, objOptions);
-        return;
-      }
 
       // similar aliases not found:
-      if (arrAliases.length === 0) {
-        console.error(dict.program.commands.execute.messages.noalias.red, strAlias.bold.red);
+      if (aliases.length === 0) {
+        console.log(colors.red(dictionary.program.commands.execute.messages.noalias), colors.bold.red(alias));
         return;
       }
       // similar aliases found:
       else {
+        // separator:
+        aliases.push(new inquirer.Separator());
+        // quit
+        aliases.push({
+          name: dictionary.program.commands.execute.messages.quit,
+          value: 'quit'
+        });
+
         inquirer.prompt([{
           type: 'list',
           name: 'alias',
-          choices: arrAliases,
-          message: dict.program.commands.execute.messages.aliaseslike
+          choices: aliases,
+          message: dictionary.program.commands.execute.messages.aliaseslike
         }]).then(function (answers) {
           if (answers.alias) {
             // quit:
@@ -355,27 +301,7 @@ var actions = {
               return;
             }
 
-            // search globals:
-            if (answers.alias === 'global') {
-              objOptions.global = true;
-              actions.execute(strAlias, objOptions);
-              return;
-            }
-
-            // execute:
-            if (/[{]{2}.+[}]{2}/.test(answers.alias.command)) {
-              _parseBinding(answers.alias).then(
-                (objParsedAlias) => {
-                  _exec(objParsedAlias, objOptions);
-                },
-                () => {
-                  console.error(dict.program.commands.execute.messages.bindingfailed);
-                }
-              );
-            }
-            else {
-              _exec(answers.alias, objOptions);
-            }
+            actions.execute(answers.alias, options);
           }
         });
       }
@@ -383,102 +309,104 @@ var actions = {
 
     /**
      * execute command
-     * @param {object} objAlias Alias object
-     * @param {object} objOptions Command options
+     * @param {object} aliasObject Alias object
+     * @param {object} options Command options
      * @private
      */
-    function _exec(objAlias, objOptions) {
-      const strFullCommand = `${objAlias.command}${objOptions.params ? ' ' + objOptions.params : ''}`;
-      const strCommand = strFullCommand.indexOf(' ') > 0 ?
-        strFullCommand.substr(0, strFullCommand.indexOf(' ')) :
-        strFullCommand;
-      const arrOpts = strFullCommand.trim().indexOf(' ') > 0 ?
-        parseArgsStringToArgv(strFullCommand.substr(strFullCommand.indexOf(' ') + 1)) :
+    function _exec(aliasObject, options) {
+      const fullCommand = `${aliasObject.command}${options.params ? ' ' + options.params : ''}`;
+      const command = fullCommand.indexOf(' ') > 0 ?
+        fullCommand.substring(0, fullCommand.indexOf(' ')) :
+        fullCommand;
+
+      options = fullCommand.trim().indexOf(' ') > 0 ?
+        parseArgsStringToArgv(fullCommand.substring(fullCommand.indexOf(' ') + 1)) :
         [];
 
       // display command:
-      console.log(strFullCommand.bold.magenta, objAlias.description || '');
+      console.log(colors.bold.magenta(fullCommand), aliasObject.description || '');
       console.log();
 
       // do not execute function:
-      if (objOptions.dry) {
+      if (options.dry) {
         return;
       }
-  
-      aux.shell(strFullCommand, strCommand, arrOpts, function () {
+
+      shell.execute(fullCommand, command, options, function () {
         return process.exit();
       });
     }
 
     /**
      * Replaces binding with user input
-     * @param objAlias Alias object
+     * @param aliasObject Alias object
      * @return {string} Alias after binding parsing
      * @private
      */
-    function _parseBinding(objAlias) {
-      let arrQuestions = [],
-        regexp = /{{(.+?)}}/g,
-        arrBinding,
-        arrBindingParts,
-        intCounter = 0,
-        objQuestion = {};
-
+    function _parseBinding(aliasObject) {
       return new Promise((resolve, reject) => {
-        arrBinding = regexp.exec(objAlias.command);
-        while (arrBinding != null) {
-          arrBindingParts = arrBinding[1].split('|');
-          switch (arrBindingParts[1]) {
+        const regexp = /{{(.+?)}}/g;
+        let bindings = regexp.exec(aliasObject.command);
+        let counter = 0;
+        const questions = [];
+
+        while (bindings != null) {
+          const bindingParts = bindings[1].split('|');
+          let question = {};
+
+          switch (bindingParts[1]) {
             case 'input':
-              objQuestion = {
-                name: arrBinding[0],
-                message: arrBindingParts[0],
-                type: arrBindingParts[1]
+              question = {
+                name: bindings[0],
+                message: bindingParts[0],
+                type: bindingParts[1]
               };
               // default option:
-              if (arrBindingParts.length === 3) {
-                objQuestion.default = arrBindingParts[2];
+              if (bindingParts.length === 3) {
+                question.default = bindingParts[2];
               }
               break;
             case 'list':
-              objQuestion = {
-                name: arrBinding[0],
-                message: arrBindingParts[0],
-                type: arrBindingParts[1],
-                choices: arrBindingParts[2].split(';')
+              question = {
+                name: bindings[0],
+                message: bindingParts[0],
+                type: bindingParts[1],
+                choices: bindingParts[2].split(';')
               };
               break;
             case 'confirm':
-              objQuestion = {
-                name: arrBinding[0],
-                message: arrBindingParts[0],
-                type: arrBindingParts[1]
+              question = {
+                name: bindings[0],
+                message: bindingParts[0],
+                type: bindingParts[1]
               };
               break;
           }
 
           // Add question only if binding doesn't exist in questions array yet (repeated bindings):
-          if (arrQuestions.some((objQuestion) => objQuestion.name === arrBinding[0]) === false) {
-            arrQuestions.push(objQuestion);
-            intCounter++;
+          if (questions.some((question) => question.name === bindings[0]) === false) {
+            questions.push(question);
+            counter++;
           }
-          arrBinding = regexp.exec(objAlias.command);
+          bindings = regexp.exec(aliasObject.command);
         }
 
-        if (arrQuestions.length > 0) {
-          inquirer.prompt(arrQuestions).then(function (answers) {
-            for (let key in answers) {
-              if (key.indexOf('|confirm|') !== -1) {
-                objAlias.command = objAlias.command.replace(key,
-                  answers[key] ? key.substring(key.lastIndexOf('|') + 1, key.lastIndexOf('}') - 1) : '');
+        if (questions.length > 0) {
+          inquirer
+            .prompt(questions)
+            .then((answers) => {
+              for (let key in answers) {
+                if (key.indexOf('|confirm|') !== -1) {
+                  aliasObject.command = aliasObject.command.replace(key,
+                    answers[key] ? key.substring(key.lastIndexOf('|') + 1, key.lastIndexOf('}') - 1) : '');
+                }
+                else {
+                  aliasObject.command = aliasObject.command.replace(key, answers[key]);
+                }
               }
-              else {
-                objAlias.command = objAlias.command.replace(key, answers[key]);
-              }
-            }
 
-            resolve(objAlias);
-          });
+              resolve(aliasObject);
+            });
         }
         else {
           reject();

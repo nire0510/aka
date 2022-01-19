@@ -1,6 +1,0 @@
-{
-  "alias":"starwars",
-  "command":"telnet towel.blinkenlights.nl",
-  "description":"watch Star Wars in ASCII",
-  "timestamp":"2016-06-28T08:49:10.306Z"
-}

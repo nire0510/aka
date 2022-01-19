@@ -1,6 +1,0 @@
-{
-  "alias":"disk-usage",
-  "command":"du -sh {{Path?|input}} | sort -g",
-  "description":"display the file space allocated to each file and directory contained in the current directory",
-  "timestamp":"2016-06-28T08:49:10.306Z"
-}

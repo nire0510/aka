@@ -1,6 +1,0 @@
-{
-  "alias":"zip-rm",
-  "command":"zip -d {{Zip path?|input}} \"{{File name pattern to remove?|input}}\"",
-  "description":"remove unwanted files from an existing zip file",
-  "timestamp":"2016-06-28T08:49:10.306Z"
-}
