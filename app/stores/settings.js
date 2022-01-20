@@ -1,6 +1,5 @@
 const os = require('os');
 const app = require('../../config/app.json');
-const root = require('../../root');
 const Storage = require('./storage');
 
 let settingsStorage;

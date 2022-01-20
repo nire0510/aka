@@ -15,6 +15,7 @@ const shell = require('./utils/shell');
 const actions = {
   /**
    * Customized help screen
+   * @returns {undefined}
    */
   async help() {
     const latestVersion = execSync('npm show as-known-as version');
@@ -27,7 +28,7 @@ const actions = {
     console.log(dictionary.program.commands.version.messages.checking);
     if (`${latestVersion}`.indexOf(pkg.version) !== 0) {
       console.log(colors.green(dictionary.program.commands.version.messages.newversion),
-        colors.bold.green(`${latestVersion}`.replace( /[^0-9\.]/ , '')));
+        colors.bold.green(`${latestVersion}`.replace( /[^0-9.]/ , '')));
       console.log(dictionary.program.commands.version.messages.upgrade,
         colors.bold(dictionary.program.commands.version.messages.command));
     }
@@ -39,14 +40,20 @@ const actions = {
 
   /**
    * Open AKA website (on npm.js
+   * @returns {undefined}
    */
-   website() {
-    shell.execute('open "https://www.npmjs.com/package/as-known-as"', 'open', ['https://www.npmjs.com/package/as-known-as']);
+  website() {
+    shell.execute('open "https://www.npmjs.com/package/as-known-as"',
+      'open',
+      ['https://www.npmjs.com/package/as-known-as']);
     process.exit();
   },
 
   /**
    * Shows all aliases with optional filter
+   * @param {string} filter Commands filter
+   * @param {object} options Command options
+   * @returns {undefined}
    */
   async list(filter, options) {
     const aliasesStorage = await AliasesStorage.getInstance();
@@ -92,8 +99,9 @@ const actions = {
   /**
    * Changes private aliases directory
    * @param {string} targetDir Target directry path
+   * @returns {undefined}
    */
-   async chdir(targetDir) {
+  async chdir(targetDir) {
     const settingsStorage = await SettingsStorage.getInstance();
     const currentDir = await settingsStorage.getItem(app.aliasesDirectoryPathKeyName);
 
@@ -108,8 +116,9 @@ const actions = {
    * @param {string} alias Current alias
    * @param {string} newAlias New alias
    * @param {object} options Command options
+   * @returns {undefined}
    */
-   async migrate() {
+  async migrate() {
     try {
       const aliasesStorage = await AliasesStorage.getInstance();
       const settingsStorage = await SettingsStorage.getInstance();
@@ -148,6 +157,7 @@ const actions = {
    * @param {string} curAlias Current alias
    * @param {string} newAlias New alias
    * @param {object} options Command options
+   * @returns {undefined}
    */
   async move(curAlias, newAlias, options) {
     const aliasObject = await actions.getAlias(curAlias, false);
@@ -158,8 +168,13 @@ const actions = {
         await actions.remove([curAlias], true);
       }
 
-      await actions.upsert(newAlias || curAlias, aliasObject.command, { description: options.description || aliasObject.description }, true);
-      console.log(colors.green(dictionary.program.commands.move.messages.moved), colors.bold.white(newAlias || curAlias));
+      await actions.upsert(newAlias || curAlias,
+        aliasObject.command,
+        { description: options.description || aliasObject.description },
+        true,
+      );
+      console.log(colors.green(dictionary.program.commands.move.messages.moved),
+        colors.bold.white(newAlias || curAlias));
     }
   },
 
@@ -168,21 +183,28 @@ const actions = {
    * @param {string} curAlias Current alias
    * @param {string} newAlias New alias
    * @param {object} options Command options
+   * @returns {undefined}
    */
   async copy(curAlias, newAlias, options) {
     const aliasObject = await actions.getAlias(curAlias, false);
 
     if (aliasObject) {
-      await actions.upsert(newAlias, aliasObject.command, { description: options.description || aliasObject.description }, true);
+      await actions.upsert(newAlias,
+        aliasObject.command,
+        { description: options.description || aliasObject.description },
+        true,
+      );
       console.log(colors.green(dictionary.program.commands.copy.messages.copied), colors.bold.white(newAlias));
     }
   },
 
   /**
    * Adds a new alias or updates an existing one
-   * @param {string[]} arrCommand Command as an array of words
-   * @param {object} options Command options
-   * @param {boolean} muted Indicates whether not to show feedback
+   * @param {string} alias Alias
+   * @param {string} command Command
+   * @param {object} options Options
+   * @param {boolean} [muted] Indicates whether not to show feedback
+   * @returns {undefined}
    */
   async upsert(alias, command, options, muted=false) {
     const curAliasObject = await actions.getAlias(alias);
@@ -192,9 +214,9 @@ const actions = {
     await aliasesStorage.setItem(alias, newAliasObject.valueOf());
     if (!muted) {
       console.log(
-          colors.green(!curAliasObject ?
-            dictionary.program.commands.upsert.messages.added :
-            dictionary.program.commands.upsert.messages.updated),
+        colors.green(!curAliasObject ?
+          dictionary.program.commands.upsert.messages.added :
+          dictionary.program.commands.upsert.messages.updated),
         colors.bold.white(newAliasObject.alias));
     }
   },
@@ -202,7 +224,8 @@ const actions = {
   /**
    * Returns an alias and optionally displays an error if it doesn't
    * @param {string} alias Alias
-   * @param {boolean} muted Indicates whether to show and error if alias doesn't exist
+   * @param {boolean} [muted] Indicates whether to show and error if alias doesn't exist
+   * @returns {Promise<Alias>} Alias object
    */
   async getAlias(alias, muted=true) {
     const aliasesStorage = await AliasesStorage.getInstance();
@@ -220,6 +243,7 @@ const actions = {
    * Removes an alias
    * @param {string[]} aliases Array of aliases
    * @param {boolean} muted Indicates whether not to show feedback
+   * @returns {Promise<void>} Undefined
    */
   async remove(aliases, muted=false) {
     if (aliases.length === 0) {
@@ -232,7 +256,8 @@ const actions = {
       // feedback:
       if (!(muted === true)) {
         removedAliases.length === 1 ?
-          console.log(colors.green(dictionary.program.commands.remove.messages.removed), colors.bold.white(`${aliases[0]}`)) :
+          console.log(colors.green(dictionary.program.commands.remove.messages.removed),
+            colors.bold.white(`${aliases[0]}`)) :
           console.log(colors.green(dictionary.program.commands.remove.messages.someremoved));
       }
     }
@@ -242,6 +267,7 @@ const actions = {
    * Executes an alias
    * @param {string} alias Alias
    * @param {object} options Command options
+   * @returns {Promise<void>} Undefined
    */
   async execute(alias, options) {
     const aliasObject = await actions.getAlias(alias);
@@ -253,11 +279,11 @@ const actions = {
       if (/[{]{2}.+[}]{2}/i.test(aliasObject.command)) {
         _parseBinding(aliasObject)
           .then((parsedAlias) => {
-              _exec(parsedAlias, options);
-            },
-            () => {
-              console.log(dictionary.program.commands.execute.messages.bindingfailed);
-            });
+            _exec(parsedAlias, options);
+          },
+          () => {
+            console.log(dictionary.program.commands.execute.messages.bindingfailed);
+          });
       }
       else {
         _exec(aliasObject, options);
@@ -281,12 +307,7 @@ const actions = {
       });
 
       // similar aliases not found:
-      if (aliases.length === 0) {
-        console.log(colors.red(dictionary.program.commands.execute.messages.noalias), colors.bold.red(alias));
-        return;
-      }
-      // similar aliases found:
-      else {
+      if (aliases.length > 1) {
         inquirer.prompt([{
           type: 'list',
           name: 'alias',
@@ -307,6 +328,9 @@ const actions = {
           }
         });
       }
+      else {
+        console.log(colors.red(dictionary.program.commands.execute.messages.noalias), colors.bold.red(alias));
+      }
     }
 
     /**
@@ -314,6 +338,7 @@ const actions = {
      * @param {object} aliasObject Alias object
      * @param {object} options Command options
      * @private
+     * @returns {undefined}
      */
     function _exec(aliasObject, options) {
       const fullCommand = `${aliasObject.command}${options.params ? ' ' + options.params : ''}`;
@@ -341,7 +366,7 @@ const actions = {
 
     /**
      * Replaces binding with user input
-     * @param aliasObject Alias object
+     * @param {Alias} aliasObject Alias object
      * @return {string} Alias after binding parsing
      * @private
      */
@@ -349,7 +374,6 @@ const actions = {
       return new Promise((resolve, reject) => {
         const regexp = /{{(.+?)}}/g;
         let bindings = regexp.exec(aliasObject.command);
-        let counter = 0;
         const questions = [];
 
         while (bindings != null) {
@@ -357,38 +381,37 @@ const actions = {
           let question = {};
 
           switch (bindingParts[1]) {
-            case 'input':
-              question = {
-                name: bindings[0],
-                message: bindingParts[0],
-                type: bindingParts[1]
-              };
-              // default option:
-              if (bindingParts.length === 3) {
-                question.default = bindingParts[2];
-              }
-              break;
-            case 'list':
-              question = {
-                name: bindings[0],
-                message: bindingParts[0],
-                type: bindingParts[1],
-                choices: bindingParts[2].split(';')
-              };
-              break;
-            case 'confirm':
-              question = {
-                name: bindings[0],
-                message: bindingParts[0],
-                type: bindingParts[1]
-              };
-              break;
+          case 'input':
+            question = {
+              name: bindings[0],
+              message: bindingParts[0],
+              type: bindingParts[1]
+            };
+            // default option:
+            if (bindingParts.length === 3) {
+              question.default = bindingParts[2];
+            }
+            break;
+          case 'list':
+            question = {
+              name: bindings[0],
+              message: bindingParts[0],
+              type: bindingParts[1],
+              choices: bindingParts[2].split(';')
+            };
+            break;
+          case 'confirm':
+            question = {
+              name: bindings[0],
+              message: bindingParts[0],
+              type: bindingParts[1]
+            };
+            break;
           }
 
           // Add question only if binding doesn't exist in questions array yet (repeated bindings):
           if (questions.some((question) => question.name === bindings[0]) === false) {
             questions.push(question);
-            counter++;
           }
           bindings = regexp.exec(aliasObject.command);
         }
@@ -397,7 +420,7 @@ const actions = {
           inquirer
             .prompt(questions)
             .then((answers) => {
-              for (let key in answers) {
+              for (const key in answers) {
                 if (key.indexOf('|confirm|') !== -1) {
                   aliasObject.command = aliasObject.command.replace(key,
                     answers[key] ? key.substring(key.lastIndexOf('|') + 1, key.lastIndexOf('}') - 1) : '');

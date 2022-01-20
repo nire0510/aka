@@ -2,9 +2,6 @@ const storage = require('node-persist');
 const dictionary = require('../../config/dictionary.json');
 
 module.exports = class Storage {
-  _storage;
-  dir;
-
   constructor(dir) {
     this._storage = storage.create({ dir });
     this.dir = dir;
@@ -49,4 +46,4 @@ module.exports = class Storage {
       return false;
     }
   }
-}
+};

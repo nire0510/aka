@@ -4,7 +4,9 @@
   "description": "Alias Bash Command on Steroids",
   "main": "bin/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint . --ext .js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install"
   },
   "preferGlobal": true,
   "bin": {
@@ -22,7 +24,7 @@
     "abbreviation",
     "productivity"
   ],
-  "author": "Nir Elbaz <nire0510@gmail.com>",
+  "author": "Nir Elbaz <nire0510>",
   "repository": {
     "type": "git",
     "url": "https://github.com/nire0510/aka"
@@ -35,5 +37,10 @@
     "inquirer": "^8.2.0",
     "node-persist": "3.1.0",
     "string-argv": "0.3.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.7.0",
+    "eslint-plugin-import": "^2.25.4",
+    "husky": "^7.0.4"
   }
 }

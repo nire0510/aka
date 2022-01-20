@@ -2,7 +2,7 @@ const fs = require('fs');
 
 /**
  * Creates a new directory
- * @param {string} strPathName Directoy path
+ * @param {string} path Directoy path
  * @returns {boolean} True on success, false otherwise
  */
 function createDirectory(path) {
@@ -20,9 +20,9 @@ function createDirectory(path) {
 /**
  * Delete file
  * @param {string} path File path
- * @returns {boolean}
+ * @returns {boolean} True if action succeeded, false otherwise.
  */
- function deleteFile(path) {
+function deleteFile(path) {
   return new Promise((resolve, reject) => {
     fs.unlink(path, (error) => {
       if (error) {
@@ -39,7 +39,7 @@ function createDirectory(path) {
  * @param {string} path Directory path
  * @returns {boolean} True if path is directory, false otherwise
  */
- function isDirectory(path) {
+function isDirectory(path) {
   return new Promise((resolve, reject) => {
     fs.stat(path, (error, stats) => {
       if (error) {
@@ -56,7 +56,7 @@ function createDirectory(path) {
  * @param {string} path Directoy path
  * @returns {boolean} True on success, false otherwise
  */
- async function readDirectory(path) {
+async function readDirectory(path) {
   const isDir = await isDirectory(path);
 
   if (isDir) {
@@ -81,14 +81,14 @@ function createDirectory(path) {
  * @returns {boolean} True if action succeeded, false otherwise.
  */
 async function moveDirectoryContent(sourcePath, targetPath) {
-  return new Promise(async (resolve, reject) => {
-    const isDir = await isDirectory(targetPath);
+  const isDir = await isDirectory(targetPath);
 
-    // create target directory if not exists:
-    if (!isDir) {
-      await createDirectory(targetPath);
-    }
+  // create target directory if not exists:
+  if (!isDir) {
+    await createDirectory(targetPath);
+  }
 
+  return new Promise((resolve, reject) => {
     fs.readdir(sourcePath, (error, files) => {
       if (error) {
         return reject(error);
@@ -110,7 +110,7 @@ async function moveDirectoryContent(sourcePath, targetPath) {
 /**
  * Read file content
  * @param {string} path File path
- * @returns {string}
+ * @returns {string} File content
  */
 function readFile(path) {
   return new Promise((resolve, reject) => {

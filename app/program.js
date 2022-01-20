@@ -1,4 +1,4 @@
-const { Command, Argument } = require('commander');
+const { Command } = require('commander');
 const actions = require('./actions');
 const dictionary = require('../config/dictionary.json');
 const pkg = require('../package.json');
