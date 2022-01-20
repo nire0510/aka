@@ -57,25 +57,30 @@ const actions = {
     }
     else {
       let counter = 0;
+      const aliases = [];
+      const filterRegExp = new RegExp(`${filter || '.'}`, 'i');
 
       // print aliases:
       await aliasesStorage.forEach((datum) => {
         // display command if not filter specified or filter matches command alias:
-        if (!filter || datum.key.indexOf(filter) !== -1 ||
-          (datum.value.description && datum.value.description.indexOf(filter) !== -1)) {
+        if (filterRegExp.test(datum.key) || filterRegExp.test((datum.value.description || ''))) {
           counter++;
-          // show alias & command:
-          try {
-            console.log('*', colors.bold.magenta(datum.key), datum.value.description);
-            if (options.command) {
-              console.log(' ', colors.gray(datum.value.command));
-            }
-          }
-          catch (err) {
-            console.log('*', colors.bold.red(datum.key), 'alias is invalid');
-          }
+          aliases.push({
+            key: datum.key,
+            description: datum.value.description,
+            command: datum.value.command,
+          });
         }
       });
+
+      aliases
+        .sort((a, b) => a.key.toLowerCase() > b.key.toLowerCase() ? 1 : -1)
+        .forEach((alias) => {
+          console.log('*', colors.bold.magenta(alias.key), alias.description);
+          if (options.command) {
+            console.log(' ', colors.gray(alias.command));
+          }
+        });
 
       console.log();
       console.log(counter === 1 ?
@@ -245,7 +250,7 @@ const actions = {
     // alias found:
     if (aliasObject) {
       // check if it has bindings:
-      if (/[{]{2}.+[}]{2}/.test(aliasObject.command)) {
+      if (/[{]{2}.+[}]{2}/i.test(aliasObject.command)) {
         _parseBinding(aliasObject)
           .then((parsedAlias) => {
               _exec(parsedAlias, options);
@@ -264,9 +269,10 @@ const actions = {
 
       // print similar aliases:
       await aliasesStorage.forEach((datum) => {
+        const aliasRegExp = new RegExp(`${alias}`, 'i');
+
         // display command if not filter specified or filter matches command alias:
-        if (datum.key.indexOf(alias) !== -1 ||
-          (datum.value.description && datum.value.description.indexOf(alias) !== -1)) {
+        if (aliasRegExp.test(datum.key) || aliasRegExp.test((datum.value.description || ''))) {
           aliases.push({
             name: `${datum.key.bold}${datum.value.description ? ' ' + colors.gray(datum.value.description) : ''}`,
             value: datum.key,
@@ -281,23 +287,19 @@ const actions = {
       }
       // similar aliases found:
       else {
-        // separator:
-        aliases.push(new inquirer.Separator());
-        // quit
-        aliases.push({
-          name: dictionary.program.commands.execute.messages.quit,
-          value: 'quit'
-        });
-
         inquirer.prompt([{
           type: 'list',
           name: 'alias',
-          choices: aliases,
-          message: dictionary.program.commands.execute.messages.aliaseslike
+          choices: aliases.sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1)
+            .concat(new inquirer.Separator(), {
+              name: dictionary.program.commands.execute.messages.quit,
+              value: 'Quit',
+            }),
+          message: dictionary.program.commands.execute.messages.aliaseslike,
         }]).then(function (answers) {
           if (answers.alias) {
             // quit:
-            if (answers.alias === 'quit') {
+            if (answers.alias === 'Quit') {
               return;
             }
 
