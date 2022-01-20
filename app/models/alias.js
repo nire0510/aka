@@ -6,15 +6,6 @@ class Alias {
     this.timestamp = new Date();
   }
 
-  asJSON() {
-    return {
-      alias: this.alias,
-      command: this.command,
-      description: this.description,
-      timestamp: this.timestamp,
-    };
-  }
-
   valueOf() {
     return {
       command: this.command,

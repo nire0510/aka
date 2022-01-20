@@ -48,10 +48,9 @@ If you choose to upgrade to the new version, please make sure you backup your al
 
 ### Advanced Usage
 1. **Dynamic command parameters** - Use command option -p to leave out parameters which you want to add dynamically, for example:
-`aka ls="ls -la" -d "display folder content as a list" ` and then use as follows:
+`aka add ls "ls -la" -d "display folder content as a list"` and then use as follows:
     `aka ex ls -p "some-path"`
-2. **Dynamic command parameters binding** - Use command option -b to flag a command with bind-able parameters.
-Parameters binding makes it even easier to execute aliases, by providing help and even set of valid options, for example:
+2. **Dynamic command parameters binding** - Parameters binding makes it even easier to execute aliases, by providing help and even set of valid options, for example:
 `aka scale-image="convert {{Source image path?|input}} -resize {{Scale rate (in percents)?|input}} {{Scaled image path?|input}}"
     -d "scale an image proportionally"`
      and then the use as follows:
@@ -60,12 +59,16 @@ Parameters binding makes it even easier to execute aliases, by providing help an
   Dynamic command parameters binding format:
     - `{{description|type[|options]}}`
     - **description** - short parameter description
-    - **type** - can be either `input` for free text, `list` for predefined list of valid options or `confirm` for
-      specific value (see **options** for more info)
-    - **options**
-        - case `list` - semicolon separated list of strings, required only if type is `list`
-        - case `confirm` - a value which will be appended to the command in case of confirmation
-        - case `input` - default value
+    - **type** - can be one of the following:    
+      * `input` for free text  
+      * `password` for masked text  
+      * `list` for predefined list of valid options  
+      * `confirm` for specific value  
+      (see **options** for more info)  
+    - **options**  
+      * `list` - semicolon separated list of strings  
+      * `confirm` - a value which will be appended to the command in case of confirmation  
+      * `input`, `password` - default value if empty  
 
 ### Tips & Tricks
 * Call any of the commands with `-h` parameter to see its help

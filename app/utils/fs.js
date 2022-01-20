@@ -52,29 +52,6 @@ function isDirectory(path) {
 }
 
 /**
- * Get all files in a directory
- * @param {string} path Directoy path
- * @returns {boolean} True on success, false otherwise
- */
-async function readDirectory(path) {
-  const isDir = await isDirectory(path);
-
-  if (isDir) {
-    return new Promise((resolve, reject) => {
-      fs.readdir(path, (error, files) => {
-        if (error) {
-          return reject(error);
-        }
-
-        resolve(files);
-      });
-    });
-  }
-
-  return Promise.resolve([]);
-}
-
-/**
  * Move all aliases from one folder to another
  * @param {string} sourcePath Source directory path
  * @param {string} targetPath Destination directory path
@@ -105,6 +82,29 @@ async function moveDirectoryContent(sourcePath, targetPath) {
       });
     });
   });
+}
+
+/**
+ * Get all files in a directory
+ * @param {string} path Directoy path
+ * @returns {boolean} True on success, false otherwise
+ */
+async function readDirectory(path) {
+  const isDir = await isDirectory(path);
+
+  if (isDir) {
+    return new Promise((resolve, reject) => {
+      fs.readdir(path, (error, files) => {
+        if (error) {
+          return reject(error);
+        }
+
+        resolve(files);
+      });
+    });
+  }
+
+  return Promise.resolve([]);
 }
 
 /**

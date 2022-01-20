@@ -1,15 +1,15 @@
 const colors = require('colors');
-const getv = require('getv');
 const execSync = require('child_process').execSync;
+const getv = require('getv');
 const inquirer = require('inquirer');
 const { parseArgsStringToArgv } = require('string-argv');
-const Alias = require('./models/alias.js');
-const AliasesStorage = require('./stores/aliases.js');
+const Alias = require('./models/alias');
+const AliasesStorage = require('./stores/aliases');
 const app = require('../config/app.json');
 const dictionary = require('../config/dictionary.json');
 const fs = require('./utils/fs');
 const pkg = require('../package.json');
-const SettingsStorage = require('./stores/settings.js');
+const SettingsStorage = require('./stores/settings');
 const shell = require('./utils/shell');
 
 const actions = {
@@ -28,7 +28,7 @@ const actions = {
     console.log(dictionary.program.commands.version.messages.checking);
     if (`${latestVersion}`.indexOf(pkg.version) !== 0) {
       console.log(colors.green(dictionary.program.commands.version.messages.newversion),
-        colors.bold.green(`${latestVersion}`.replace( /[^0-9.]/ , '')));
+        colors.green.bold(`${latestVersion}`.replace( /[^0-9.]/ , '')));
       console.log(dictionary.program.commands.version.messages.upgrade,
         colors.bold(dictionary.program.commands.version.messages.command));
     }
@@ -43,9 +43,9 @@ const actions = {
    * @returns {undefined}
    */
   website() {
-    shell.execute('open "https://www.npmjs.com/package/as-known-as"',
-      'open',
-      ['https://www.npmjs.com/package/as-known-as']);
+    const url = 'https://www.npmjs.com/package/as-known-as';
+
+    shell.execute(`open "${url}"`, 'open', [url]);
     process.exit();
   },
 
@@ -90,24 +90,24 @@ const actions = {
         });
 
       console.log();
-      console.log(counter === 1 ?
-        dictionary.program.commands.list.messages.totalone :
-        dictionary.program.commands.list.messages.total, colors.bold(counter.toString()));
+      console.log(dictionary.program.commands.list.messages[counter === 1 ? 'totalone' : 'total'],
+        colors.bold(counter.toString()));
     }
   },
 
   /**
    * Changes private aliases directory
-   * @param {string} targetDir Target directry path
+   * @param {string} targetAliasesDirPath Target directry path
    * @returns {undefined}
    */
-  async chdir(targetDir) {
+  async chdir(targetAliasesDirPath) {
     const settingsStorage = await SettingsStorage.getInstance();
-    const currentDir = await settingsStorage.getItem(app.aliasesDirectoryPathKeyName);
+    const currentAliasesDirectoryPath = await settingsStorage.getItem(app.aliasesDirectoryPathKeyName);
 
-    if (fs.moveDirectoryContent(currentDir, targetDir)) {
-      await settingsStorage.setItem(app.aliasesDirectoryPathKeyName, targetDir);
-      console.log(colors.green(dictionary.program.commands.chdir.messages.changed), colors.bold.white(targetDir));
+    if (fs.moveDirectoryContent(currentAliasesDirectoryPath, targetAliasesDirPath)) {
+      await settingsStorage.setItem(app.aliasesDirectoryPathKeyName, targetAliasesDirPath);
+      console.log(colors.green(dictionary.program.commands.chdir.messages.changed),
+        colors.bold.white(targetAliasesDirPath));
     }
   },
 
@@ -214,9 +214,7 @@ const actions = {
     await aliasesStorage.setItem(alias, newAliasObject.valueOf());
     if (!muted) {
       console.log(
-        colors.green(!curAliasObject ?
-          dictionary.program.commands.upsert.messages.added :
-          dictionary.program.commands.upsert.messages.updated),
+        colors.green(dictionary.program.commands.upsert.messages[!curAliasObject ? 'added' : 'updated']),
         colors.bold.white(newAliasObject.alias));
     }
   },
@@ -308,25 +306,26 @@ const actions = {
 
       // similar aliases not found:
       if (aliases.length > 1) {
-        inquirer.prompt([{
-          type: 'list',
-          name: 'alias',
-          choices: aliases.sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1)
-            .concat(new inquirer.Separator(), {
-              name: dictionary.program.commands.execute.messages.quit,
-              value: 'Quit',
-            }),
-          message: dictionary.program.commands.execute.messages.aliaseslike,
-        }]).then(function (answers) {
-          if (answers.alias) {
-            // quit:
-            if (answers.alias === 'Quit') {
-              return;
-            }
+        inquirer
+          .prompt([{
+            type: 'list',
+            name: 'alias',
+            choices: aliases.sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1)
+              .concat(new inquirer.Separator(), {
+                name: dictionary.program.commands.execute.messages.quit,
+                value: 'Quit',
+              }),
+            message: dictionary.program.commands.execute.messages.aliaseslike,
+          }])
+          .then((answers) => {
+            if (answers.alias) {
+              if (answers.alias === 'Quit') {
+                return;
+              }
 
-            actions.execute(answers.alias, options);
-          }
-        });
+              actions.execute(answers.alias, options);
+            }
+          });
       }
       else {
         console.log(colors.red(dictionary.program.commands.execute.messages.noalias), colors.bold.red(alias));
@@ -359,7 +358,7 @@ const actions = {
         return;
       }
 
-      shell.execute(fullCommand, command, options, function () {
+      shell.execute(fullCommand, command, options, () => {
         return process.exit();
       });
     }
@@ -382,6 +381,7 @@ const actions = {
 
           switch (bindingParts[1]) {
           case 'input':
+          case 'password':
             question = {
               name: bindings[0],
               message: bindingParts[0],

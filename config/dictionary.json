@@ -3,7 +3,7 @@
     "setup": {
       "messages": {
         "storagefailed": "Could not setup storage (did you install package using sudo? have invalid file in your aliases directory?)",
-        "storagepath": "Current alias directory:",
+        "storagepath": "Current aliases directory:",
         "directoryfailed": "Failed to create storage directory (did you install package using sudo?). Please try to re-run."
       }
     },
@@ -17,7 +17,7 @@
       },
       "version": {
         "messages": {
-          "checking": "Checking for newer version... ",
+          "checking": "Checking for a newer version... ",
           "uptodate": "You have the latest version:",
           "newversion": "A newer version is available:",
           "upgrade": "To upgrade to the latest version, run:",

@@ -40,10 +40,10 @@ function execute(fullCommand, command, options, callback) {
   exec(fullCommand, {
     cwd: process.env.PWD,
     env: process.env,
-  }, (err, stdout, stderr) => {
-    if (err) {
+  }, (error, stdout, stderr) => {
+    if (error) {
       console.error(stderr);
-      throw err;
+      throw error;
     }
 
     console.log(stdout);
