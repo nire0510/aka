@@ -1,6 +1,6 @@
 {
   "name": "as-known-as",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Alias Bash Command on Steroids",
   "main": "bin/index.js",
   "scripts": {
