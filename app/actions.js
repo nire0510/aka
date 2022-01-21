@@ -233,8 +233,10 @@ const actions = {
     const curAliasObject = await getAlias(alias);
     const newAliasObject = new Alias(alias, command, options.description || getv(curAliasObject, 'description'));
     const aliasesStorage = await AliasesStorage.getInstance();
+    const aliasObjectMinusAlias = Object.assign({}, newAliasObject.valueOf());
 
-    await aliasesStorage.setItem(alias, newAliasObject.valueOf());
+    delete aliasObjectMinusAlias.alias;
+    await aliasesStorage.setItem(alias, aliasObjectMinusAlias);
     if (!muted) {
       console.log(
         colors.green(dictionary.program.commands.upsert.messages[!curAliasObject ? 'added' : 'updated']),

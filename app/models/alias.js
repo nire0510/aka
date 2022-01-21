@@ -8,6 +8,7 @@ class Alias {
 
   valueOf() {
     return {
+      alias: this.alias,
       command: this.command,
       description: this.description,
       timestamp: this.timestamp,
