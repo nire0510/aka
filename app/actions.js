@@ -12,6 +12,45 @@ const pkg = require('../package.json');
 const SettingsStorage = require('./stores/settings');
 const shell = require('./utils/shell');
 
+/**
+ * Returns an alias and optionally displays an error if it doesn't
+ * @param {string} alias Alias
+ * @param {boolean} [muted] Indicates whether to show and error if alias doesn't exist
+ * @returns {Promise<Alias>} Alias object
+ */
+async function getAlias(alias, muted=true) {
+  const aliasesStorage = await AliasesStorage.getInstance();
+  const aliasObject = await aliasesStorage.getItem(alias);
+
+  // feedback:
+  if (!aliasObject && !muted) {
+    console.log(colors.red(dictionary.program.commands.common.messages.noSuchAlias), colors.bold.red(alias));
+  }
+
+  return aliasObject;
+}
+
+async function searchAliases(filter) {
+  const aliasesStorage = await AliasesStorage.getInstance();
+  const aliases = [];
+
+  // print aliases:
+  await aliasesStorage.forEach((datum) => {
+    aliases.push({
+      key: datum.key,
+      description: datum.value.description,
+      command: datum.value.command,
+    });
+  });
+
+  return filter
+    .reduce((a, token) => a
+      .filter((alias) => !token ||
+        alias.key.toLowerCase().indexOf(token.toLowerCase()) !== -1 ||
+        (alias.description || '').toLowerCase().indexOf(token.toLowerCase()) !== -1), aliases)
+    .sort((a, b) => a.key.toLowerCase() > b.key.toLowerCase() ? 1 : -1);
+}
+
 const actions = {
   /**
    * Customized help screen
@@ -63,25 +102,9 @@ const actions = {
       console.log(colors.green(dictionary.program.commands.list.messages.listempty));
     }
     else {
-      let counter = 0;
-      const aliases = [];
-      const filterRegExp = new RegExp(`${filter || '.'}`, 'i');
+      const results = await searchAliases(filter);
 
-      // print aliases:
-      await aliasesStorage.forEach((datum) => {
-        // display command if not filter specified or filter matches command alias:
-        if (filterRegExp.test(datum.key) || filterRegExp.test((datum.value.description || ''))) {
-          counter++;
-          aliases.push({
-            key: datum.key,
-            description: datum.value.description,
-            command: datum.value.command,
-          });
-        }
-      });
-
-      aliases
-        .sort((a, b) => a.key.toLowerCase() > b.key.toLowerCase() ? 1 : -1)
+      results
         .forEach((alias) => {
           console.log('*', colors.bold.magenta(alias.key), alias.description);
           if (options.command) {
@@ -90,8 +113,8 @@ const actions = {
         });
 
       console.log();
-      console.log(dictionary.program.commands.list.messages[counter === 1 ? 'totalone' : 'total'],
-        colors.bold(counter.toString()));
+      console.log(dictionary.program.commands.list.messages[results.length === 1 ? 'totalone' : 'total'],
+        colors.bold(results.length.toString()));
     }
   },
 
@@ -160,7 +183,7 @@ const actions = {
    * @returns {undefined}
    */
   async move(curAlias, newAlias, options) {
-    const aliasObject = await actions.getAlias(curAlias, false);
+    const aliasObject = await getAlias(curAlias, false);
 
     if (aliasObject) {
       // remove old command:
@@ -186,7 +209,7 @@ const actions = {
    * @returns {undefined}
    */
   async copy(curAlias, newAlias, options) {
-    const aliasObject = await actions.getAlias(curAlias, false);
+    const aliasObject = await getAlias(curAlias, false);
 
     if (aliasObject) {
       await actions.upsert(newAlias,
@@ -207,7 +230,7 @@ const actions = {
    * @returns {undefined}
    */
   async upsert(alias, command, options, muted=false) {
-    const curAliasObject = await actions.getAlias(alias);
+    const curAliasObject = await getAlias(alias);
     const newAliasObject = new Alias(alias, command, options.description || getv(curAliasObject, 'description'));
     const aliasesStorage = await AliasesStorage.getInstance();
 
@@ -217,24 +240,6 @@ const actions = {
         colors.green(dictionary.program.commands.upsert.messages[!curAliasObject ? 'added' : 'updated']),
         colors.bold.white(newAliasObject.alias));
     }
-  },
-
-  /**
-   * Returns an alias and optionally displays an error if it doesn't
-   * @param {string} alias Alias
-   * @param {boolean} [muted] Indicates whether to show and error if alias doesn't exist
-   * @returns {Promise<Alias>} Alias object
-   */
-  async getAlias(alias, muted=true) {
-    const aliasesStorage = await AliasesStorage.getInstance();
-    const aliasObject = await aliasesStorage.getItem(alias);
-
-    // feedback:
-    if (!aliasObject && !muted) {
-      console.log(colors.red(dictionary.program.commands.common.messages.noSuchAlias), colors.bold.red(alias));
-    }
-
-    return aliasObject;
   },
 
   /**
@@ -263,13 +268,12 @@ const actions = {
 
   /**
    * Executes an alias
-   * @param {string} alias Alias
+   * @param {string[]} alias Alias as string (commander)
    * @param {object} options Command options
    * @returns {Promise<void>} Undefined
    */
   async execute(alias, options) {
-    const aliasObject = await actions.getAlias(alias);
-    const aliasesStorage = await AliasesStorage.getInstance();
+    const aliasObject = await getAlias(alias.join(' '));
 
     // alias found:
     if (aliasObject) {
@@ -289,28 +293,23 @@ const actions = {
     }
     // alias not found, display similar aliases
     else {
-      const aliases = [];
+      const results = await searchAliases(alias);
 
-      // print similar aliases:
-      await aliasesStorage.forEach((datum) => {
-        const aliasRegExp = new RegExp(`${alias}`, 'i');
-
-        // display command if not filter specified or filter matches command alias:
-        if (aliasRegExp.test(datum.key) || aliasRegExp.test((datum.value.description || ''))) {
-          aliases.push({
-            name: `${datum.key.bold}${datum.value.description ? ' ' + colors.gray(datum.value.description) : ''}`,
-            value: datum.key,
-          });
-        }
-      });
-
+      // single alias found
+      if (results.length === 1) {
+        actions.execute([results[0].key], options);
+      }
       // similar aliases not found:
-      if (aliases.length > 1) {
+      else if (results.length > 1) {
         inquirer
           .prompt([{
             type: 'list',
             name: 'alias',
-            choices: aliases.sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1)
+            choices: results
+              .map((a) => ({
+                name: `${colors.bold(a.key)}${a.description ? ' ' + colors.gray(a.description) : ''}`,
+                value: a.key,
+              }))
               .concat(new inquirer.Separator(), {
                 name: dictionary.program.commands.execute.messages.quit,
                 value: 'Quit',
@@ -323,12 +322,12 @@ const actions = {
                 return;
               }
 
-              actions.execute(answers.alias, options);
+              actions.execute([answers.alias], options);
             }
           });
       }
       else {
-        console.log(colors.red(dictionary.program.commands.execute.messages.noalias), colors.bold.red(alias));
+        console.log(colors.red(dictionary.program.commands.execute.messages.noalias), colors.bold.red(alias.join(' ')));
       }
     }
 

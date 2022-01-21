@@ -26,7 +26,7 @@ program
     }
     else {
       if (program.args.length > 0) {
-        actions.execute(program.args.join(' '), options);
+        actions.execute(program.args, options);
       }
       else {
         await actions.help();
@@ -49,7 +49,7 @@ program
   .action(actions.copy);
 
 program
-  .command('execute <alias>')
+  .command('execute <alias...>')
   .alias('ex')
   .option('-d, --dry', dictionary.program.commands.execute.options.dry)
   .option('-p, --params <params...>', dictionary.program.commands.execute.options.params)
@@ -57,7 +57,7 @@ program
   .action(actions.execute);
 
 program
-  .command('list [filter]')
+  .command('list [filter...]')
   .alias('ls')
   .description(dictionary.program.commands.list.description)
   .option('-c, --command', dictionary.program.commands.list.options.command)
