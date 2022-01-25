@@ -36,12 +36,6 @@ program
   });
 
 program
-  .command('add <alias> <command>')
-  .description(dictionary.program.commands.upsert.description)
-  .option('-d, --description <description>', dictionary.program.commands.upsert.options.description)
-  .action((alias, command, options) => actions.upsert(alias, command, options, false));
-
-program
   .command('copy <from> <to>')
   .alias('cp')
   .description(dictionary.program.commands.copy.description)
@@ -51,6 +45,7 @@ program
 program
   .command('execute <alias...>')
   .alias('ex')
+  .alias('exec')
   .option('-d, --dry', dictionary.program.commands.execute.options.dry)
   .option('-p, --params <params...>', dictionary.program.commands.execute.options.params)
   .description(dictionary.program.commands.execute.description)
@@ -62,6 +57,14 @@ program
   .description(dictionary.program.commands.list.description)
   .option('-c, --command', dictionary.program.commands.list.options.command)
   .action(actions.list);
+
+program
+  .command('make <alias> <command>')
+  .alias('mk')
+  .alias('add')
+  .description(dictionary.program.commands.upsert.description)
+  .option('-d, --description <description>', dictionary.program.commands.upsert.options.description)
+  .action((alias, command, options) => actions.upsert(alias, command, options, false));
 
 program
   .command('move <from> [to]')

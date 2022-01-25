@@ -21,12 +21,12 @@ If you choose to upgrade to the new version, please make sure you backup your al
 `Usage: aka [options] [command]`
 
 ### Commands
-* `add [options] <alias> <command>` - add a new alias or update existing one
-* `copy|cp [options] <from> <to>`   - copy an existing alias
-* `execute|ex [options] <alias>`    - execute an alias
-* `list|ls [options] [filter]`      - show all aliases
-* `move|mv [options] <from> <to>`   - rename an alias and/or update its description
-* `remove|rm <alias...>`            - remove a one or more aliases
+* `copy|cp [options] <from> <to>`       - copy an existing alias
+* `execute|ex [options] <alias>`        - execute an alias
+* `list|ls [options] [filter]`          - show all aliases
+* `make|mk [options] <alias> <command>` - add a new alias or update existing one
+* `move|mv [options] <from> <to>`       - rename an alias and/or update its description
+* `remove|rm <alias...>`                - remove one or more aliases
 
 ### Options
 `-C, --chdir <path>`  change the aliases directory

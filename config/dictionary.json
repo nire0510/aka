@@ -71,6 +71,7 @@
       },
       "upsert": {
         "description": "add a new alias or update existing one",
+        "descriptionold": "add a new alias or update existing one (deprecated, use make instead)",
         "options": {
           "alias": "command alias",
           "description": "short description"
@@ -81,7 +82,7 @@
         }
       },
       "remove": {
-        "description": "remove a one or more aliases",
+        "description": "remove one or more aliases",
         "options": {
           "recursive": "remove all aliases",
           "force": "remove all aliases, never prompt"
