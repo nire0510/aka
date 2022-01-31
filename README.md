@@ -59,15 +59,18 @@ If you choose to upgrade to the new version, please make sure you backup your al
   Dynamic command parameters binding format:
     - `{{description|type[|options]}}`
     - **description** - short parameter description
-    - **type** - can be one of the following:    
-      * `input` for free text  
-      * `password` for masked text  
-      * `list` for predefined list of valid options  
+    - **type** - can be one of the following:  
+      * `checkbox` for predefined list of valid options - multiple options  
       * `confirm` for specific value  
+      * `expand` for predefined list of valid options - single option  
+      * `input` for free text  
+      * `list` for predefined list of valid options - single option  
+      * `password` for masked text  
       (see **options** for more info)  
     - **options**  
-      * `list` - semicolon separated list of strings  
+      * `checkbox`, `list` - semicolon separated list of strings (e.g. op1;op2;op3)  
       * `confirm` - a value which will be appended to the command in case of confirmation  
+      * `expand` - semicolon separated list of comma separated key value pairs  (e.g. a,op1;b,op2;c,op3)  
       * `input`, `password` - default value if empty  
 
 ### Tips & Tricks

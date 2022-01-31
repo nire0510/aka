@@ -393,12 +393,31 @@ const actions = {
               question.default = bindingParts[2];
             }
             break;
+          case 'checkbox':
           case 'list':
             question = {
               name: bindings[0],
               message: bindingParts[0],
               type: bindingParts[1],
               choices: bindingParts[2].split(';')
+            };
+            break;
+          case 'expand':
+            question = {
+              name: bindings[0],
+              message: bindingParts[0],
+              type: bindingParts[1],
+              choices: bindingParts[2]
+                .split(';')
+                .map((c) => {
+                  const i = c.split(',');
+                  
+                  return {
+                    key: i[0],
+                    name: i[1],
+                    value: i[0],
+                  };
+                }),
             };
             break;
           case 'confirm':
