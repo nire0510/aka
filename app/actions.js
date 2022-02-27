@@ -72,7 +72,7 @@ const actions = {
         colors.bold(dictionary.program.commands.version.messages.command));
     }
     else {
-      console.log(colors.green(dictionary.program.commands.version.messages.uptodate), colors.white.bold(pkg.version));
+      console.log(dictionary.program.commands.version.messages.uptodate, colors.white.bold(pkg.version));
     }
     console.log();
   },

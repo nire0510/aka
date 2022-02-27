@@ -14,6 +14,7 @@ program
   .option('-C, --chdir <path>', dictionary.program.commands.chdir.description)
   .option('-m, --migrate', dictionary.program.commands.migrate.description)
   .option('-w, --website', dictionary.program.commands.website.description)
+  .option('-p, --params <params...>', dictionary.program.commands.execute.options.params)
   .action(async (options) => {
     if (options.chdir) {
       actions.chdir(options.chdir);
