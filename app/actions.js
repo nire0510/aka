@@ -341,6 +341,7 @@ const actions = {
      * @returns {undefined}
      */
     function _exec(aliasObject, options) {
+      const dry = options.dry;
       const fullCommand = `${aliasObject.command}${options.params ? ' ' + options.params : ''}`;
       const command = fullCommand.indexOf(' ') > 0 ?
         fullCommand.substring(0, fullCommand.indexOf(' ')) :
@@ -355,7 +356,7 @@ const actions = {
       console.log();
 
       // do not execute function:
-      if (options.dry) {
+      if (dry) {
         return;
       }
 
