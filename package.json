@@ -1,6 +1,6 @@
 {
   "name": "as-known-as",
-  "version": "1.2.3",
+  "version": "1.2.5",
   "description": "Alias Bash Command on Steroids",
   "main": "bin/index.js",
   "scripts": {
@@ -32,15 +32,15 @@
   "license": "ISC",
   "dependencies": {
     "colors": "^1.4.0",
-    "commander": "^8.3.0",
+    "commander": "^9.3.0",
     "getv": "^1.0.6",
-    "inquirer": "^8.2.0",
+    "inquirer": "^8.2.4",
     "node-persist": "3.1.0",
     "string-argv": "0.3.1"
   },
   "devDependencies": {
-    "eslint": "^8.7.0",
-    "eslint-plugin-import": "^2.25.4",
-    "husky": "^7.0.4"
+    "eslint": "^8.19.0",
+    "eslint-plugin-import": "^2.26.0",
+    "husky": "^8.0.1"
   }
 }

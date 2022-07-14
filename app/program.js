@@ -14,7 +14,7 @@ program
   .option('-C, --chdir <path>', dictionary.program.commands.chdir.description)
   .option('-m, --migrate', dictionary.program.commands.migrate.description)
   .option('-w, --website', dictionary.program.commands.website.description)
-  .option('-d, --dry', dictionary.program.commands.execute.options.dry)
+  .option('--dry', dictionary.program.commands.execute.options.dry)
   .option('-p, --params <params...>', dictionary.program.commands.execute.options.params)
   .action(async (options) => {
     if (options.chdir) {
@@ -48,7 +48,7 @@ program
   .command('execute <alias...>')
   .alias('ex')
   .alias('exec')
-  .option('-d, --dry', dictionary.program.commands.execute.options.dry)
+  .option('--dry', dictionary.program.commands.execute.options.dry)
   .option('-p, --params <params...>', dictionary.program.commands.execute.options.params)
   .description(dictionary.program.commands.execute.description)
   .action(actions.execute);
