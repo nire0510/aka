@@ -385,7 +385,7 @@ const actions = {
           case 'input':
           case 'password':
             question = {
-              name: bindings[0],
+              name: bindings[0].replace(/\./g, '~~'),
               message: bindingParts[0],
               type: bindingParts[1]
             };
@@ -397,7 +397,7 @@ const actions = {
           case 'checkbox':
           case 'list':
             question = {
-              name: bindings[0],
+              name: bindings[0].replace(/\./g, '~~'),
               message: bindingParts[0],
               type: bindingParts[1],
               choices: bindingParts[2].split(';')
@@ -405,7 +405,7 @@ const actions = {
             break;
           case 'expand':
             question = {
-              name: bindings[0],
+              name: bindings[0].replace(/\./g, '~~'),
               message: bindingParts[0],
               type: bindingParts[1],
               choices: bindingParts[2]
@@ -423,7 +423,7 @@ const actions = {
             break;
           case 'confirm':
             question = {
-              name: bindings[0],
+              name: bindings[0].replace(/\./g, '~~'),
               message: bindingParts[0],
               type: bindingParts[1]
             };
@@ -442,12 +442,14 @@ const actions = {
             .prompt(questions)
             .then((answers) => {
               for (const key in answers) {
-                if (key.indexOf('|confirm|') !== -1) {
-                  aliasObject.command = aliasObject.command.replace(key,
-                    answers[key] ? key.substring(key.lastIndexOf('|') + 1, key.lastIndexOf('}') - 1) : '');
+                const originalKey = key.replace(/~~/g, '.');
+
+                if (originalKey.indexOf('|confirm|') !== -1) {
+                  aliasObject.command = aliasObject.command.replace(originalKey,
+                    answers[key] ? key.substring(originalKey.lastIndexOf('|') + 1, key.lastIndexOf('}') - 1) : '');
                 }
                 else {
-                  aliasObject.command = aliasObject.command.replace(key, answers[key]);
+                  aliasObject.command = aliasObject.command.replace(originalKey, answers[key]);
                 }
               }
 
